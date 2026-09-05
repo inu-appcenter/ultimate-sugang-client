@@ -1,0 +1,8 @@
+node_modules
+dist
+.claude
+intake
+harness
+*.md
+# 원§6 CSS 규칙 단위 원문 레이아웃 유지(04 §4-1) — 자동 포맷 제외
+src/shared/styles/globals.css

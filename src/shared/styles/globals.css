@@ -1,0 +1,280 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   globals.css — 값의 기술 베이스 (04 §1 토큰 + 원§6 CSS 이식, 04 §4)
+   · hex/px 값은 이 파일과 tailwind.config.ts 에만 둔다 (token-lint allow).
+   · 원§6 CSS 를 규칙 단위로 그대로 옮기고 색 → var(--토큰), 미확보 이미지 url 은 제거.
+   · 신규 클래스는 맨 아래 "하네스 추가 규칙" 블록(04 §4-2)만 허용.
+   ============================================================================ */
+
+/* ===== 디자인 토큰 (04 §1) ===== */
+:root {
+  /* §1-1 타이포그래피 (D18: 웹폰트 미도입) */
+  --font-family: Dotum, Gulim, 돋움, 굴림, arial, sans-serif;
+  --font-tiny: 10px;
+  --font-small: 11px;
+  --font-base: 12px;
+  --font-login-btn: 13px;
+  --font-header: 14px;
+
+  /* §1-2 색 — 본문 화면 */
+  --navy-900: #0F4EAB;
+  --blue-label: #D6DFF0;
+  --blue-header: #E0E8F5;
+  --blue-topline: #3E74BA;
+  --blue-en: #16529B;
+  --blue-text: #004096;
+  --blue-border: #1F5CB7;
+  --blue-print: #306FB6;
+  --orange: #D95C00;
+  --red-border: #C80606;
+  --red-text: #CA0000;
+  --text: #333333;
+  --text-muted: #848484;
+  --maroon: #800000;
+  --cyan: #0082A7;
+  --border: #B7B7B7;
+  --border-lt: #CCCBC9;
+  --border-tab: #CDCDCD;
+  --bg-btn: #F2F2F2;
+  --bg-tab: #F3F3F3;
+  --white: #FFFFFF;
+  --border-sch: #CBCBCB;
+  --border-input: #CFCFCF;
+  --grey-sch: #616161;
+  --noti-blue: #1958A8;
+  --bg-noti: #EFF5FC;
+  --tag-blue: #0000FF;
+
+  /* §1-2 색 — 로그인 화면 (⚠️ --login-navy ≠ --navy-900, 통일 금지) */
+  --login-navy: #094A9A;
+  --login-divide: #46639B;
+  --login-input: #E0E0E0;
+  --login-hint: #E2E0E1;
+  --btn-bg: #F6F6F6;
+  --etc-border: #DFDFDF;
+
+  /* §1-2 색 — 시간표 출력 화면 (PRINT_APPLY, Q-5 전 미사용) */
+  --time-th: #D3D3D3;
+  --time-sun: #F6E0E0;
+  --time-sat: #C3DDEF;
+
+  /* §1-3 모서리 — 전 요소 0 */
+  --radius: 0;
+
+  /* §1-4 크기·간격 */
+  --w-wrap: 80%;
+  --minw-wrap: 1400px;
+  --sp-wrap: 10px;
+  --h-result: 337px;
+  --h-input: 32px;
+  --w-search-input: 200px;
+  --w-login-input: 184px;
+  --w-login-btn: 86px;
+  --h-login-btn: 72px;
+  --w-login: 928px;
+  --h-login: 380px;
+  --h-login-con: 306px;
+  --h-etc: 43px;
+  --w-print: 148px;
+  --h-print: 24px;
+  --sp-cell-y: 10px;
+  --sp-cell-x: 15px;
+  --sp-data-y: 5px;
+  --sp-data-x: 3px;
+  --sp-ltf: 10px;
+  --sp-btn: 3px;
+  --sp-tab: 5px;
+  --sp-perT-mb: 8px;
+  --sp-sch-mb: 20px;
+  --sp-sch-pb: 10px;
+  --sp-regi-mb: 5px;
+  --sp-btnarea-mb: 10px;
+}
+
+/* ===== 원§6 이식 — 리셋 / 기본 (Tailwind preflight 위에 덧씌움, 04 §4-5) ===== */
+* { margin:0; padding:0; border:0; font-size:100%; vertical-align:baseline; border-radius:var(--radius); }
+body { color:var(--text); font-size:var(--font-base);
+       font-family:var(--font-family); }
+table { border-collapse:collapse; border-spacing:0; }
+em { font-style:normal; }
+hr { display:none; }
+ol, ul { list-style:none; }
+img, select, textarea { vertical-align:middle; }
+input[type="text"], select, textarea { font-family:Dotum, Gulim; font-size:var(--font-base); }
+a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); }
+
+/* ===== 레이아웃 ===== */
+.wrap { box-sizing:border-box; padding:var(--sp-wrap); width:var(--w-wrap); min-width:var(--minw-wrap); }
+
+/* ===== 상단 학적 정보 ===== */
+.perT { table-layout:fixed; width:100%; margin-bottom:var(--sp-perT-mb); }
+.perT th, .perT td { box-sizing:border-box; padding:var(--sp-cell-y) var(--sp-cell-x);
+                     border:1px solid var(--border-lt); }
+.perT th { text-align:right; font-weight:bold; background-color:var(--blue-label); }
+.perT th.titY { text-align:center; vertical-align:middle; color:var(--white);
+                font-size:var(--font-header); background-color:var(--navy-900); }
+
+/* ===== 검색 영역 ===== */
+.sjt_sch { overflow:hidden; box-sizing:border-box; width:100%;
+           margin-bottom:var(--sp-sch-mb); padding-bottom:var(--sp-sch-pb);
+           border-bottom:1px solid var(--border-sch); }
+.sjt_sch label, #register .sjt_sch span { float:left; }
+.sjt_sch label { display:inline-block; font-weight:bold; padding:8px 10px 0 0; }
+.sjt_sch span input[type="text"] { box-sizing:border-box; padding:0 5px;
+           width:var(--w-search-input); height:var(--h-input); vertical-align:middle;
+           border:1px solid var(--border-input); }
+
+/* ===== 결과 스크롤 컨테이너 ===== */
+.sch_areaT,
+.sch_areaSubT { height:var(--h-result); overflow-y:auto;
+                border-width:1px 1px 2px; border-style:solid;
+                border-color:var(--border); }
+
+/* ===== 데이터 테이블 ===== */
+.dataT { table-layout:fixed; width:100%; font-size:var(--font-base); }
+.dataT th, .dataT td { box-sizing:border-box; padding:var(--sp-data-y) var(--sp-data-x);
+                       text-align:center; border:1px solid var(--border); }
+.dataT th { font-weight:bold; border-top:2px solid var(--blue-topline);
+            background-color:var(--blue-header); }
+.dataT .first { border-left:none; }
+.dataT .last  { border-right:none; }
+.dataT .ltf   { text-align:left; padding:0 0 0 var(--sp-ltf); }
+.dataT .timeInfo { text-align:left; padding:0 0 0 var(--sp-ltf);
+                   white-space:nowrap; overflow:hidden;
+                   text-overflow:ellipsis; }
+.dataT .grey  { color:var(--text-muted); }
+.dataT .brown { color:var(--maroon); }
+.dataT .blue  { color:var(--cyan); }
+
+/* ===== 신청내역 영역 ===== */
+.regi_area .regi_top { margin-bottom:var(--sp-regi-mb); }
+.regi_area > div::after { content:""; display:block; clear:both; }
+.regi_area .regi_top p { float:right; }
+.regi_area .regi_top p.noti_blue { float:left; padding-top:5px; }
+
+/* ===== 버튼 ===== */
+.btn_re    { display:inline-block; box-sizing:border-box; padding:var(--sp-tab);
+             margin-right:1px; font-weight:bold; font-size:var(--font-small);
+             border:1px solid var(--border-tab); background-color:var(--bg-tab);
+             cursor:pointer; }
+.btn_sch   { display:inline-block; box-sizing:border-box;
+             padding:8px 5px 0; height:var(--h-input); vertical-align:middle;
+             font-weight:bold; background-color:var(--grey-sch);
+             color:var(--white) !important; }
+.btn_blue  { width:90%; display:inline-block; box-sizing:border-box;
+             padding:var(--sp-btn); font-weight:bold; font-size:var(--font-small);
+             border:1px solid var(--blue-border); background-color:var(--bg-btn);
+             cursor:pointer; color:var(--blue-text) !important; }
+.btn_grey2 { width:90%; display:inline-block; box-sizing:border-box;
+             padding:var(--sp-btn); font-weight:bold; font-size:var(--font-small);
+             border:1px solid var(--text-muted); background-color:var(--bg-btn);
+             color:var(--text-muted) !important; }              /* cursor 없음 */
+.btn_red   { width:90%; display:inline-block; box-sizing:border-box;
+             padding:var(--sp-btn); font-weight:bold; font-size:var(--font-small);
+             border:1px solid var(--red-border); background-color:var(--bg-btn);
+             cursor:pointer; color:var(--red-text) !important; }
+.btn_mrc   { display:inline-block; box-sizing:border-box; padding:var(--sp-btn);
+             font-weight:bold; font-size:var(--font-small);
+             border:1px solid var(--blue-border); background-color:var(--bg-btn);
+             cursor:pointer; color:var(--blue-text) !important; }
+.btn_regiP { display:inline-block; box-sizing:border-box; padding:var(--sp-tab);
+             text-align:center; font-weight:bold; font-size:var(--font-small);
+             background-color:var(--blue-print); cursor:pointer;
+             color:var(--white) !important; }
+.btn_scheP { display:inline-block; box-sizing:border-box; padding:var(--sp-tab);
+             font-weight:bold; font-size:var(--font-small);
+             background-color:var(--orange); cursor:pointer;
+             color:var(--white) !important; }
+.btn_area  { margin-bottom:var(--sp-btnarea-mb); }
+
+/* ===== 안내 문구 ===== */
+.noti      { font-size:var(--font-small); font-weight:bold; }
+.noti span { color:var(--text-muted); }
+.noti em   { color:var(--maroon); }
+.noti_blue { font-size:var(--font-small); color:var(--noti-blue); }
+/* bul2.gif / bul4.gif 미확보 → background 속성 제거, padding 유지 (04 §4-3) */
+.tit_sub    { margin:30px 0 15px; padding-left:35px; font-size:var(--font-header); }
+.tit_re_sub { margin:20px 0 10px; padding-left:30px; font-size:var(--font-header); }
+
+/* ===== 접근성 스킵 링크 ===== */
+.skip { display:block; height:1px; width:1px; margin:0 -1px -1px 0;
+        padding:0; overflow:hidden; font-size:0; line-height:0; }
+.skip:hover, .skip:active, .skip:focus {
+        width:100%; height:auto; margin:0; padding:5px 0;
+        text-indent:10px; font-weight:bold; font-size:var(--font-base);
+        color:var(--text); font-family:Dotum; line-height:1;
+        text-align:center; text-decoration:none !important; }
+
+/* ===== 로그인 화면 (id 선택자 원문 유지 — D2 예외) ===== */
+#login { position:absolute; top:50%; left:50%;
+         margin:-190px 0 0 -464px; width:var(--w-login); height:var(--h-login); }
+#login .tit { margin-bottom:18px; }
+#login .tit h1, #login .tit h2 { display:inline-block; }
+#login .tit h1 { margin:0 34px 0 38px; }
+#login .login_con { box-sizing:border-box; padding:60px 60px 0;
+                    width:var(--w-login); height:var(--h-login-con); background:var(--login-navy); }
+#login .login_con h3 { margin-bottom:34px; }
+#login .login_con .login_area { position:relative; overflow:hidden; }
+#login .login_con .login_area > div { float:left; overflow:hidden; }
+#login .id_w { position:relative; padding-right:125px;
+               border-right:1px solid var(--login-divide); }
+#login .id_w > p { table-layout:fixed; display:table; margin-bottom:8px; }
+#login .id_w > p > label,
+#login .id_w > p > span { display:table-cell; }
+#login .id_w > p > label { width:110px; height:var(--h-input); vertical-align:middle;
+                           color:var(--white); font-weight:bold; }
+#login .id_w > p > span input { box-sizing:border-box; padding:0 5px;
+                                width:var(--w-login-input); height:var(--h-input); border:none;
+                                background-color:var(--login-input); }
+#login .id_w .txt { padding-top:10px; font-weight:bold;
+                    color:var(--login-hint); font-size:var(--font-small); }
+.btn_login { display:block; position:absolute; top:0; left:300px;
+             box-sizing:border-box; padding-top:27px;
+             width:var(--w-login-btn); height:var(--h-login-btn); cursor:pointer;
+             text-align:center; font-weight:bold; font-size:var(--font-login-btn);
+             border:1px solid var(--border-input); background-color:var(--btn-bg); }
+#login .login_con .login_area > div ul { float:left; margin-left:38px; }
+#login .login_area > div ul.last { margin-left:10px; }
+#login .login_area > div ul li { width:175px; }
+#login .login_area > div ul.last li { width:150px; }
+#login .login_area > div ul li:first-child { margin-bottom:10px; }
+.btn_etc  { display:block; box-sizing:border-box; padding:13px 0 0 13px;
+            height:var(--h-etc); font-weight:bold; cursor:pointer;
+            border:3px solid var(--etc-border); background:var(--bg-tab); }
+.btn_etc2 { display:block; box-sizing:border-box; padding:6px 0 0 8px;
+            height:var(--h-etc); font-weight:bold; cursor:pointer;
+            border:3px solid var(--etc-border); background:var(--bg-tab); }
+
+/* ===== 공지 팝업 (정의만 이식) ===== */
+#noti_pop .tit_pop { overflow:hidden; background-color:var(--login-navy); }
+#noti_pop .tit_pop h1 { float:left; padding:15px; color:var(--white);
+                        font-weight:bold; font-size:var(--font-header); }
+#noti_pop .tit_pop p { float:right; margin-right:10px; }
+#noti_pop .con_pop { padding:20px; }
+#noti_pop .con_pop .block  { margin-bottom:20px; }
+#noti_pop .con_pop .block2 { margin-bottom:20px; line-height:1.5em; }
+
+/* ===== 시간표 출력 화면 (PRINT_APPLY — Q-5 전 미사용, 정의만 이식) ===== */
+.leftT { float:left; width:100%; height:320px; overflow-y:auto;
+         border-width:1px 1px 2px; border-style:solid; border-color:var(--border); }
+.timeT { table-layout:fixed; font-size:var(--font-base); }
+.timeT.rightT { float:right; width:28%; }
+.timeT th, .timeT td { box-sizing:border-box; padding:0; height:1px;
+                       text-align:center; }
+/* 원문 #3D75BB → --blue-topline 으로 통일 (D13) */
+.timeT th     { border-top:1px solid var(--blue-topline); background-color:var(--time-th); }
+.timeT .sun   { background-color:var(--time-sun); }
+.timeT .sat   { background-color:var(--time-sat); }
+.timeT .blue2 { background-color:var(--cyan); }
+.timeT .grey2 { background-color:var(--border); }
+
+/* ===== 하네스 추가 규칙 (04 §4-2) — 이 블록 외 신규 클래스 금지 ===== */
+.th-en { font-size:var(--font-tiny); color:var(--blue-en); }      /* <font size="1" color="#16529B"> 대체 (D2) */
+.tag { color:var(--tag-blue); }                                     /* <font color="blue"> 대체 (D2) */
+.dataT .grey .tag { color:inherit; }                                /* 마감 행: 태그도 부모색 상속 (01 §3-3) */
+.scr-noti { background:var(--bg-noti); }                            /* 화면별 안내 영역 배경 (원§8.6) */
+.practice-banner { font-size:var(--font-small); font-weight:bold; color:var(--maroon); } /* D11: .noti em 스타일 */
+[hidden] { display:none; }

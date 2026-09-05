@@ -12,7 +12,7 @@
     {
       "id": "step-1-setup",
       "step": 1,
-      "status": "TODO",
+      "status": "COMPLETED",
       "title": "프로젝트 셋업(스캐폴드·토큰·CSS 이식·alias·env·빈 라우트)",
       "phase_file": ".claude/resource/phases/step-1-setup.md"
     },
@@ -202,7 +202,9 @@
     }
   ],
   "figma": {},
-  "retry": {},
+  "retry": {
+    "step-1-setup": 1
+  },
   "manual_review": [],
   "open_questions": [
     "Q-1",
@@ -226,6 +228,24 @@
       "ts": "2026-09-06",
       "event": "harness-init",
       "detail": "명세 intake/INU-수강신청-모의사이트-명세.md 인테이크 → spec 6문서(00~05) 생성, rules PROJECT 블록(api-contract·ui-conventions·decisions D1~D22) 채움, checklist 16항목(리뷰 대상 13)·phase 파일 8개 생성. spec-presence OK, validate-state OK. phase INIT→BUILD. 열린 질문 Q-1~Q-15(차단: Q-5·Q-6 → step-7). 사용자 승인 대기."
+    },
+    {
+      "ts": "2026-09-06",
+      "event": "start",
+      "id": "step-1-setup",
+      "detail": "Phase 0 복구: IN_PROGRESS 0개·package.json 부재 확인. step-1-setup 착수(03 §7 1~10)."
+    },
+    {
+      "ts": "2026-09-06",
+      "event": "gate",
+      "id": "step-1-setup",
+      "detail": "--full 1차 FAIL(typecheck·build): TS 6.0 은 참조 프로젝트에 composite+emit 을 요구(TS6306/TS6310) → tsconfig.node.json 참조를 제거하고 단일 tsconfig(src+vite.config.ts+tailwind.config.ts)로 통합. 자가수정 1회. 2차 --full OK."
+    },
+    {
+      "ts": "2026-09-06",
+      "event": "complete",
+      "id": "step-1-setup",
+      "detail": "Vite 8+React 18.3+TS 6.0 스캐폴드, Tailwind 3.4(screens:{}·radius 0·토큰 var() 매핑), globals.css(04 §1 토큰 + 원§6 CSS 이식 + 04 §4-2 추가 규칙), @/ alias, ESLint 10 flat(react-hooks·react-refresh·상대경로 import 금지), .env.example 3변수, 03 §4 폴더, 라우트 /·/sukang placeholder, QueryClientProvider(refetchOnWindowFocus:false·retry:0). gate --full OK · eslint OK · dev 서버 /·/sukang 200. Step 1 종료 → 리뷰 패킷 제출 후 정지."
     }
   ]
 }

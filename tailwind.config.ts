@@ -1,0 +1,117 @@
+import type { Config } from 'tailwindcss'
+
+/**
+ * Tailwind 명명 매핑 — rules/ui-conventions.md "토큰 ↔ Tailwind 클래스 명명 매핑" 표와 1:1.
+ * 값은 전부 globals.css 의 CSS 변수(04 §1)를 참조한다(hex/px 직접 기재 금지).
+ * D8: 반응형 breakpoint 없음(screens: {}) · dark: 미사용. D13: 별칭 body(--text)·line(--border).
+ */
+export default {
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  theme: {
+    screens: {},
+    borderRadius: {
+      none: 'var(--radius)',
+      sm: 'var(--radius)',
+      DEFAULT: 'var(--radius)',
+      md: 'var(--radius)',
+      lg: 'var(--radius)',
+      xl: 'var(--radius)',
+      '2xl': 'var(--radius)',
+      '3xl': 'var(--radius)',
+      full: 'var(--radius)',
+    },
+    extend: {
+      colors: {
+        'navy-900': 'var(--navy-900)',
+        'blue-label': 'var(--blue-label)',
+        'blue-header': 'var(--blue-header)',
+        'blue-topline': 'var(--blue-topline)',
+        'blue-en': 'var(--blue-en)',
+        'blue-text': 'var(--blue-text)',
+        'blue-border': 'var(--blue-border)',
+        'blue-print': 'var(--blue-print)',
+        orange: 'var(--orange)',
+        'red-border': 'var(--red-border)',
+        'red-text': 'var(--red-text)',
+        body: 'var(--text)',
+        muted: 'var(--text-muted)',
+        maroon: 'var(--maroon)',
+        cyan: 'var(--cyan)',
+        line: {
+          DEFAULT: 'var(--border)',
+          lt: 'var(--border-lt)',
+          tab: 'var(--border-tab)',
+          sch: 'var(--border-sch)',
+          input: 'var(--border-input)',
+        },
+        btn: 'var(--bg-btn)',
+        tab: 'var(--bg-tab)',
+        noti: 'var(--bg-noti)',
+        white: 'var(--white)',
+        'grey-sch': 'var(--grey-sch)',
+        'noti-blue': 'var(--noti-blue)',
+        'tag-blue': 'var(--tag-blue)',
+        'login-navy': 'var(--login-navy)',
+        'login-divide': 'var(--login-divide)',
+        'login-input': 'var(--login-input)',
+        'login-hint': 'var(--login-hint)',
+        'btn-bg': 'var(--btn-bg)',
+        'etc-border': 'var(--etc-border)',
+        'time-th': 'var(--time-th)',
+        'time-sun': 'var(--time-sun)',
+        'time-sat': 'var(--time-sat)',
+      },
+      borderColor: {
+        DEFAULT: 'var(--border)',
+      },
+      fontFamily: {
+        dotum: 'var(--font-family)',
+      },
+      fontSize: {
+        tiny: 'var(--font-tiny)',
+        small: 'var(--font-small)',
+        base: 'var(--font-base)',
+        'login-btn': 'var(--font-login-btn)',
+        header: 'var(--font-header)',
+      },
+      padding: {
+        wrap: 'var(--sp-wrap)',
+        'cell-y': 'var(--sp-cell-y)',
+        'cell-x': 'var(--sp-cell-x)',
+        'data-y': 'var(--sp-data-y)',
+        'data-x': 'var(--sp-data-x)',
+        ltf: 'var(--sp-ltf)',
+        btn: 'var(--sp-btn)',
+        tab: 'var(--sp-tab)',
+        sch: 'var(--sp-sch-pb)',
+      },
+      margin: {
+        perT: 'var(--sp-perT-mb)',
+        sch: 'var(--sp-sch-mb)',
+        regi: 'var(--sp-regi-mb)',
+        btnarea: 'var(--sp-btnarea-mb)',
+      },
+      height: {
+        result: 'var(--h-result)',
+        input: 'var(--h-input)',
+        'login-btn': 'var(--h-login-btn)',
+        login: 'var(--h-login)',
+        'login-con': 'var(--h-login-con)',
+        etc: 'var(--h-etc)',
+        print: 'var(--h-print)',
+      },
+      width: {
+        wrap: 'var(--w-wrap)',
+        'search-input': 'var(--w-search-input)',
+        'login-input': 'var(--w-login-input)',
+        'login-btn': 'var(--w-login-btn)',
+        login: 'var(--w-login)',
+        print: 'var(--w-print)',
+      },
+      minWidth: {
+        wrap: 'var(--minw-wrap)',
+      },
+    },
+  },
+  plugins: [],
+} satisfies Config
