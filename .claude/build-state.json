@@ -1,0 +1,231 @@
+{
+  "meta": {
+    "harness_version": "2.0-template",
+    "project": "inu-sugang-mock",
+    "project_title": "INU 수강신청 모의 사이트 (연습용)",
+    "phase": "BUILD",
+    "spec_source": "intake/INU-수강신청-모의사이트-명세.md",
+    "note": "phase=BUILD: spec/ 읽기전용(00_INDEX.md 만 예외). checklist 의 가장 이른 비완료(TODO/IN_PROGRESS) 항목이 진행의 유일한 권위. IN_PROGRESS 는 동시에 정확히 1개. step-7:* 는 blocked_by 의 Q 답변(decisions D 기록) 전 진행 금지.",
+    "init_at": "2026-09-06"
+  },
+  "checklist": [
+    {
+      "id": "step-1-setup",
+      "step": 1,
+      "status": "TODO",
+      "title": "프로젝트 셋업(스캐폴드·토큰·CSS 이식·alias·env·빈 라우트)",
+      "phase_file": ".claude/resource/phases/step-1-setup.md"
+    },
+    {
+      "id": "step-2-infra",
+      "step": 2,
+      "status": "TODO",
+      "title": "횡단 인프라(스키마·mock 어댑터·훅·세션·상수·공용 컴포넌트)",
+      "phase_file": ".claude/resource/phases/step-2-infra.md"
+    },
+    {
+      "id": "step-3:LOGIN",
+      "step": 3,
+      "status": "TODO",
+      "screen": "LOGIN",
+      "title": "로그인(학번만, 비밀번호 없음)",
+      "phase_file": ".claude/resource/phases/step-3-shell.md",
+      "spec": [
+        "01 §7",
+        "05 §2"
+      ]
+    },
+    {
+      "id": "step-3:MAIN_SHELL",
+      "step": 3,
+      "status": "TODO",
+      "screen": "MAIN_SHELL",
+      "title": "메인 골격(perT·탭7·주의문구·제목라인·출력버튼 자리)",
+      "phase_file": ".claude/resource/phases/step-3-shell.md",
+      "spec": [
+        "01 §2-2",
+        "05 §1",
+        "05 §3"
+      ]
+    },
+    {
+      "id": "step-3:ENROLLMENT_LIST",
+      "step": 3,
+      "status": "TODO",
+      "screen": "ENROLLMENT_LIST",
+      "title": "수강신청내역(11컬럼) + 취소 플로우",
+      "phase_file": ".claude/resource/phases/step-3-shell.md",
+      "spec": [
+        "01 §6",
+        "05 §6"
+      ]
+    },
+    {
+      "id": "step-4:JUNGONG",
+      "step": 4,
+      "status": "TODO",
+      "screen": "JUNGONG",
+      "title": "전공과목(즉시 로드, 10컬럼) + 신청 플로우",
+      "phase_file": ".claude/resource/phases/step-4-nocond.md",
+      "spec": [
+        "01 §4-3",
+        "01 §6-1",
+        "05 §5"
+      ]
+    },
+    {
+      "id": "step-4:HUSS",
+      "step": 4,
+      "status": "TODO",
+      "screen": "HUSS",
+      "title": "HUSS전공과목(즉시 로드, 9컬럼)",
+      "phase_file": ".claude/resource/phases/step-4-nocond.md",
+      "spec": [
+        "01 §4-7",
+        "05 §5"
+      ]
+    },
+    {
+      "id": "step-4:BASKET",
+      "step": 4,
+      "status": "TODO",
+      "screen": "BASKET",
+      "title": "장바구니(즉시 로드, 10컬럼)",
+      "phase_file": ".claude/resource/phases/step-4-nocond.md",
+      "spec": [
+        "01 §4-2",
+        "05 §5"
+      ]
+    },
+    {
+      "id": "step-5:TAGWA",
+      "step": 5,
+      "status": "TODO",
+      "screen": "TAGWA",
+      "title": "타학과과목(select 76, 9컬럼)",
+      "phase_file": ".claude/resource/phases/step-5-select.md",
+      "spec": [
+        "01 §4-5",
+        "02 §5-2",
+        "05 §5-2"
+      ]
+    },
+    {
+      "id": "step-5:YUNGAE",
+      "step": 5,
+      "status": "TODO",
+      "screen": "YUNGAE",
+      "title": "연계전공과목(select 32, 8컬럼)",
+      "phase_file": ".claude/resource/phases/step-5-select.md",
+      "spec": [
+        "01 §4-6",
+        "02 §5-3",
+        "05 §5-2"
+      ]
+    },
+    {
+      "id": "step-6:GYOYANG",
+      "step": 6,
+      "status": "TODO",
+      "screen": "GYOYANG",
+      "title": "교양과목(2단 연동 select 표시 토글, 9컬럼)",
+      "phase_file": ".claude/resource/phases/step-6-linked.md",
+      "spec": [
+        "01 §4-4",
+        "02 §5-1",
+        "05 §5-1"
+      ]
+    },
+    {
+      "id": "step-6:CUSTOM",
+      "step": 6,
+      "status": "TODO",
+      "screen": "CUSTOM",
+      "title": "과목명(코드) 조회(텍스트 2자 이상, 10컬럼)",
+      "phase_file": ".claude/resource/phases/step-6-linked.md",
+      "spec": [
+        "01 §4-8",
+        "05 §5-3"
+      ]
+    },
+    {
+      "id": "step-7:PRINT_CHECK",
+      "step": 7,
+      "status": "TODO",
+      "screen": "PRINT_CHECK",
+      "title": "확인서출력 — ⛔ 명세 gap",
+      "phase_file": ".claude/resource/phases/step-7-gap.md",
+      "blocked_by": [
+        "Q-5"
+      ],
+      "spec": [
+        "01 §9",
+        "05 §8"
+      ]
+    },
+    {
+      "id": "step-7:PRINT_APPLY",
+      "step": 7,
+      "status": "TODO",
+      "screen": "PRINT_APPLY",
+      "title": "시간표출력 — ⛔ 명세 gap",
+      "phase_file": ".claude/resource/phases/step-7-gap.md",
+      "blocked_by": [
+        "Q-5"
+      ],
+      "spec": [
+        "01 §9",
+        "05 §8"
+      ]
+    },
+    {
+      "id": "step-7:WAITING_ROOM",
+      "step": 7,
+      "status": "TODO",
+      "screen": "WAITING_ROOM",
+      "title": "대기열 화면 — ⛔ 명세 gap",
+      "phase_file": ".claude/resource/phases/step-7-gap.md",
+      "blocked_by": [
+        "Q-6"
+      ],
+      "spec": [
+        "01 §8",
+        "05 §8"
+      ]
+    },
+    {
+      "id": "step-8-qa",
+      "step": 8,
+      "status": "TODO",
+      "title": "QA(Playwright 스모크 + 전 화면 수동 점검)",
+      "phase_file": ".claude/resource/phases/step-8-qa.md"
+    }
+  ],
+  "figma": {},
+  "retry": {},
+  "manual_review": [],
+  "open_questions": [
+    "Q-1",
+    "Q-2",
+    "Q-3",
+    "Q-4",
+    "Q-5",
+    "Q-6",
+    "Q-7",
+    "Q-8",
+    "Q-9",
+    "Q-10",
+    "Q-11",
+    "Q-12",
+    "Q-13",
+    "Q-14",
+    "Q-15"
+  ],
+  "log": [
+    {
+      "ts": "2026-09-06",
+      "event": "harness-init",
+      "detail": "명세 intake/INU-수강신청-모의사이트-명세.md 인테이크 → spec 6문서(00~05) 생성, rules PROJECT 블록(api-contract·ui-conventions·decisions D1~D22) 채움, checklist 16항목(리뷰 대상 13)·phase 파일 8개 생성. spec-presence OK, validate-state OK. phase INIT→BUILD. 열린 질문 Q-1~Q-15(차단: Q-5·Q-6 → step-7). 사용자 승인 대기."
+    }
+  ]
+}
