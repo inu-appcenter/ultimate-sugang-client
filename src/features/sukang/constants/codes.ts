@@ -1,14 +1,28 @@
-/**
- * 02 §5 enum·코드 체계 — 값 추가/변경 금지 (rules/api-contract.md).
- * TAGWA_LIST(76)·YUNGAE_LIST(32) 는 .claude/spec/02_api_spec.md §5-2/§5-3 원문에서 스크립트로 그대로 추출했다.
- * select 코드값 미제공(Q-14) → mock 은 이름 문자열을 값으로 쓴다(D1).
- */
-
-/** 02 §5-5 교과목명 태그 */
-export const COURSE_TAGS = ['[75분수업]', '[온라인혼합형강좌]', '[e-Learning]'] as const
+export const COURSE_TAGS = [
+  '75분수업',
+  '온라인혼합형강좌',
+  'e-Learning',
+  'e-Learning(HUSS)',
+  '온라인혼합형강좌(HUSS)',
+] as const
 export type CourseTag = (typeof COURSE_TAGS)[number]
+export const formatTag = (tag: CourseTag): string => `[${tag}]`
 
-/** 02 §5-4 select placeholder 원문 — '=' 개수 select 마다 다름, 그대로 사용 */
+// enum 값 추가·변경 금지(서버 확정 9종) → .claude/spec/convention/01_data.md §3
+export const COURSE_TYPES = [
+  '전공기초',
+  '전공핵심',
+  '전공심화',
+  '기초교양',
+  '핵심교양',
+  '심화교양',
+  '일반선택',
+  '교직',
+  '군사학',
+] as const
+export type CourseType = (typeof COURSE_TYPES)[number]
+export const MAJOR_COURSE_TYPES: readonly CourseType[] = ['전공기초', '전공핵심', '전공심화']
+
 export const PLACEHOLDERS = {
   cmbCptnGbn: '===== 이수구분 =====',
   cmbFldGnb: '===== 이수영역 =====',
@@ -21,16 +35,13 @@ export interface CodeOption {
   name: string
 }
 
-/** 02 §5-1 교양 2단 트리 — 1단 이수구분(cmbCptnGbn). 3단계 없음. */
 export const CPTN_GBN_CODES = ['11', '21', '23', '50', '70', '80'] as const
 export type CptnGbnCode = (typeof CPTN_GBN_CODES)[number]
-/** 하위 이수영역 select 가 있는 1단 코드(11/21/23) — 코드값이 곧 하위 select id 접미사 */
 export const FLD_GNB_PARENT_CODES = ['11', '21', '23'] as const
 export type FldGnbParentCode = (typeof FLD_GNB_PARENT_CODES)[number]
 
 export interface CptnGbnOption extends CodeOption {
   code: CptnGbnCode
-  /** 하위 select id (`cmbFldGnb` + 코드) 또는 null(50/70/80) */
   childId: `cmbFldGnb${FldGnbParentCode}` | null
 }
 export const CPTN_GBN: readonly CptnGbnOption[] = [
@@ -42,7 +53,7 @@ export const CPTN_GBN: readonly CptnGbnOption[] = [
   { code: '80', name: '일반선택', childId: null },
 ]
 
-/** 02 §5-1 하위 이수영역(cmbFldGnb11/21/23). `ㆍ` = U+318D (일반 · U+00B7 아님). */
+// 162 의 가운뎃점은 U+318D → .claude/spec/convention/01_data.md §3
 export const FLD_GNB: Record<FldGnbParentCode, readonly CodeOption[]> = {
   '11': [
     { code: '161', name: '학문의기초' },
@@ -65,6 +76,9 @@ export const FLD_GNB: Record<FldGnbParentCode, readonly CodeOption[]> = {
   ],
 }
 
+export type FldGnbSelection = Record<FldGnbParentCode, string>
+export const EMPTY_FLD_GNB: FldGnbSelection = { '11': '', '21': '', '23': '' }
+
 export const isCptnGbnCode = (v: string): v is CptnGbnCode =>
   (CPTN_GBN_CODES as readonly string[]).includes(v)
 export const isFldGnbParentCode = (v: string): v is FldGnbParentCode =>
@@ -74,7 +88,6 @@ export const cptnGbnName = (code: string): string | undefined =>
 export const fldGnbName = (parent: string, code: string): string | undefined =>
   isFldGnbParentCode(parent) ? FLD_GNB[parent].find((o) => o.code === code)?.name : undefined
 
-/** 02 §5-2 타학과 학과(부) 76개 — 원문 순서(영문 → 가나다), 야간 `(야)` 접미 */
 export const TAGWA_LIST: readonly string[] = [
   'Global Trade & Service학부',
   'HUSS(교류대학)',
@@ -154,7 +167,6 @@ export const TAGWA_LIST: readonly string[] = [
   '환경공학전공',
 ]
 
-/** 02 §5-3 연계전공 32개 — 이름에 쉼표 포함 2건(쉼표 분리 금지) */
 export const YUNGAE_LIST: readonly string[] = [
   'INU리버럴아츠연계전공',
   'MICE,스포츠및관광연계전공',
@@ -190,6 +202,5 @@ export const YUNGAE_LIST: readonly string[] = [
   '항체공학연계전공',
 ]
 
-/** 02 §5-7 출력 타입 (동작은 Q-5 전 없음) */
 export const PRINT_TYPES = ['check', 'apply'] as const
 export type PrintType = (typeof PRINT_TYPES)[number]
