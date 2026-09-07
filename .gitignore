@@ -5,3 +5,8 @@ dist/
 !.env.example
 /tmp/
 .DS_Store
+test-results/
+playwright-report/
+
+# 원본 명세·시드 데이터(외부 반출 대상 아님)
+intake/
