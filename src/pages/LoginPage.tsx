@@ -1,4 +1,5 @@
-/** step-1 placeholder — step-3:LOGIN 에서 <LoginBox/> 로 교체 (03 §4) */
+import { LoginBox } from '@/features/login/components/LoginBox'
+
 export function LoginPage() {
-  return <div>LOGIN</div>
+  return <LoginBox />
 }
