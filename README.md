@@ -41,3 +41,21 @@
 | phase-0 + step `_templates/` | `resource/phases/step-*.md` 인스턴스 |
 
 상세 설치/사용: `.claude/resource/HARNESS.md` · 훅/게이트 권위: `.claude/rules/hooks.md`
+
+---
+
+## 이 저장소의 프로젝트: inu-sugang-mock (INU 수강신청 연습용 모의 사이트)
+
+명세 `intake/INU-수강신청-모의사이트-명세.md` + 시드 `intake/INU-시드데이터.md` 로 빌드한 React 앱. SoT 는 `.claude/spec/`, 결정은 `.claude/rules/decisions.md`(D1~D49).
+
+```bash
+npm install
+npm run dev                 # http://localhost:5173 — 학번 아무 값이나 입력 → 메인
+npm run build && npm run preview
+npm run typecheck && npm run lint
+npx playwright test .claude/resource/smoke    # 스모크 11건(dev 서버 자동 기동, 최초 1회 npx playwright install chromium)
+bash .claude/hooks/checks/gate-runner.sh --with-smoke   # 하네스 게이트 전체
+```
+
+- 데이터: mock 어댑터(인메모리 시드 72강좌, 200~800ms 지연, 서버 검증 시뮬레이션). `.env.example` 참고 — `VITE_CAPTCHA=on` 이면 신청 시 CAPTCHA 모달, `VITE_MOCK_FAIL=session` 이면 신청/취소 시 세션 만료 흐름.
+- 실 백엔드 계약은 프론트의 `src/features/sukang/api/types.ts`(`SukangApi`) + `src/features/sukang/schemas.ts` 를 기준으로 도출한다(D25). `http` 어댑터는 스텁.
