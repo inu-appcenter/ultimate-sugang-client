@@ -1,6 +1,5 @@
-import type { KeyboardEvent } from 'react'
+import { handleActivateKey } from '@/shared/lib/keyboard'
 
-/** 05 §4-7 액션 셀 3종. `마감` 은 핸들러 없음·커서 없음(01 §6-3). */
 export type ActionKind = 'enroll' | 'closed' | 'cancel'
 
 const LABEL: Record<ActionKind, string> = { enroll: '신청', closed: '마감', cancel: '취소' }
@@ -10,22 +9,22 @@ const CLASS_NAME: Record<ActionKind, string> = {
   cancel: 'btn_red',
 }
 
-export function ActionButton({ kind, onClick }: { kind: ActionKind; onClick?: () => void }) {
+interface ActionButtonProps {
+  kind: ActionKind
+  onClick?: () => void
+}
+
+export function ActionButton({ kind, onClick }: ActionButtonProps) {
+  // 마감은 핸들러·커서 없음(정원 사전 차단) → .claude/spec/convention/02_ui.md §6
   if (kind === 'closed') return <a className={CLASS_NAME.closed}>{LABEL.closed}</a>
 
-  const onKeyDown = (e: KeyboardEvent<HTMLAnchorElement>) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onClick?.()
-    }
-  }
   return (
     <a
       className={CLASS_NAME[kind]}
       role="button"
       tabIndex={0}
       onClick={onClick}
-      onKeyDown={onKeyDown}
+      onKeyDown={handleActivateKey(() => onClick?.())}
     >
       {LABEL[kind]}
     </a>
