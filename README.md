@@ -5,28 +5,31 @@
 
 > 학교와 무관한 비공식 프로젝트입니다. 실제 수강신청과 연결되지 않습니다.
 
+<br>
+
 ## 기술 스택
 
 <img src="https://skillicons.dev/icons?i=react,ts,vite,tailwind&perline=6" alt="React, TypeScript, Vite, Tailwind CSS" />
 
 TanStack Query · Zustand · React Hook Form + Zod · axios · React Router · Playwright
 
-원본 CSS 를 이식한 프로젝트라 UI 라이브러리를 쓰지 않고, 다이얼로그는 네이티브 `alert`/`confirm` 입니다.
+<br>
+
 
 ## 시작하기
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173 — 학번에 아무 값이나 넣으면 진입
+npm run dev
 ```
-
-서버 없이 바로 돕니다. 기본값이 인메모리 mock(시드 강좌 72건)이라 조회·신청·취소·검증 실패까지 재현됩니다.
 
 ```bash
 npm run build                                  # 타입 검사 + 프로덕션 빌드
 npm run typecheck && npm run lint
 npx playwright test .claude/resource/smoke     # 스모크 13건
 ```
+
+<br>
 
 ## 구조
 
@@ -51,5 +54,3 @@ src/
 .claude/                  이 앱을 만든 스펙 주도 빌드 하네스(명세·규칙·게이트·스모크)
 intake/                   원본 명세·시드 데이터 (커밋 제외)
 ```
-
-의존 방향은 `app → pages → features → shared` 단방향이고, import 는 `@/` 절대경로만 씁니다.
