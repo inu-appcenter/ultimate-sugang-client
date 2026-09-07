@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
 import { sukangApi } from '@/features/sukang/api'
 import type { ScreenKey } from '@/features/sukang/constants/screens'
 import { sukangKeys } from '@/features/sukang/queryKeys'
 import type { Course } from '@/features/sukang/schemas'
 import { useSessionStore } from '@/shared/session/store'
 
-/** 화면별 조회 파라미터(03 §3-2 O-2~O-8). 조건 없음 화면은 빈 객체. */
 export interface CourseParamsMap {
   Basket: Record<string, never>
   Jungong: Record<string, never>
@@ -31,7 +31,6 @@ const fetchers: {
 
 export const useStudentId = (): string | null => useSessionStore((s) => s.studentId)
 
-/** O-1 학생 정보(perT) */
 export function useStudent() {
   const studentId = useStudentId()
   return useQuery({
@@ -41,10 +40,6 @@ export function useStudent() {
   })
 }
 
-/**
- * 03 §5-5 조회 트리거: 조건 없음 화면은 `params = {}` 로 즉시, 조건 있는 화면은 [조회] 후 `submitted` 를 넘긴다.
- * `params === null` 이면 요청하지 않는다(D19 미충족 no-op 와 결합).
- */
 export function useCourseList<K extends ScreenKey>(
   screen: K,
   params: CourseParams<K> | null,
@@ -61,7 +56,6 @@ export function useCourseList<K extends ScreenKey>(
   })
 }
 
-/** O-9 신청내역 — 스크롤 없이 전건 */
 export function useEnrollments() {
   const studentId = useStudentId()
   return useQuery({
@@ -71,15 +65,17 @@ export function useEnrollments() {
   })
 }
 
-/** O-10 신청. 성공 → enrollments 만 invalidate(D4: courses 미갱신). alert 는 호출 측(03 §5-2). */
-export function useEnroll() {
+function useEnrollmentMutation<T>(
+  request: (params: { studentId: string; courseId: string }) => Promise<T>,
+) {
   const queryClient = useQueryClient()
   const studentId = useStudentId()
   return useMutation({
-    mutationFn: (courseId: string) => {
-      if (studentId === null) return Promise.reject(new Error('세션 없음'))
-      return sukangApi.enroll({ studentId, courseId })
-    },
+    mutationFn: (courseId: string) =>
+      studentId === null
+        ? Promise.reject(new Error('세션 없음'))
+        : request({ studentId, courseId }),
+    // enrollments 만 갱신한다 — courses(조회 목록)는 그대로 → .claude/spec/convention/01_data.md §7
     onSuccess: () => {
       if (studentId !== null)
         void queryClient.invalidateQueries({ queryKey: sukangKeys.enrollments(studentId) })
@@ -87,32 +83,19 @@ export function useEnroll() {
   })
 }
 
-/** O-11 취소. 성공 → enrollments invalidate. confirm/alert 는 호출 측. */
-export function useCancel() {
+export const useEnroll = () => useEnrollmentMutation((p) => sukangApi.enroll(p))
+
+export const useCancel = () => useEnrollmentMutation((p) => sukangApi.cancel(p))
+
+export function useSearchSubmit<K extends ScreenKey>(screen: K) {
   const queryClient = useQueryClient()
-  const studentId = useStudentId()
-  return useMutation({
-    mutationFn: (courseId: string) => {
-      if (studentId === null) return Promise.reject(new Error('세션 없음'))
-      return sukangApi.cancel({ studentId, courseId })
-    },
-    onSuccess: () => {
-      if (studentId !== null)
-        void queryClient.invalidateQueries({ queryKey: sukangKeys.enrollments(studentId) })
-    },
-  })
-}
-
-/** D9 4상태 — 원본 시각 유지: Loading/Error/Empty 는 thead 만, Data 만 행 렌더 */
-export type TableStatus = 'loading' | 'error' | 'empty' | 'data'
-
-export function tableStatusOf(q: {
-  isPending: boolean
-  isFetching: boolean
-  isError: boolean
-  data: readonly unknown[] | undefined
-}): TableStatus {
-  if (q.isError) return 'error'
-  if (q.data === undefined) return q.isPending && q.isFetching ? 'loading' : 'empty'
-  return q.data.length === 0 ? 'empty' : 'data'
+  const [submitted, setSubmitted] = useState<CourseParams<K> | null>(null)
+  const submit = (params: CourseParams<K>) => {
+    if (submitted !== null && JSON.stringify(submitted) === JSON.stringify(params)) {
+      void queryClient.invalidateQueries({ queryKey: sukangKeys.courses(screen, submitted) })
+      return
+    }
+    setSubmitted(params)
+  }
+  return { submitted, submit }
 }
