@@ -10,23 +10,25 @@ import {
   STUDENT_FIXTURE,
   YUNGAE_COURSES,
 } from '@/features/sukang/api/mock/fixtures'
-import { resolveCourseType, validateEnroll } from '@/features/sukang/api/mock/validate'
+import {
+  creditLimitFor,
+  resolveCourseType,
+  validateEnroll,
+} from '@/features/sukang/api/mock/validate'
 import { cptnGbnName, fldGnbName } from '@/features/sukang/constants/codes'
 import type { Course, EnrollmentRow, Student } from '@/features/sukang/schemas'
 import { randomDelay } from '@/shared/api/delay'
 import { env } from '@/shared/config/env'
 
-/**
- * D1 mock 어댑터: 인메모리 픽스처 + 서버 지연(원§12 200~800ms) + 서버 검증 시뮬레이션(02 §4-1) + 이수구분 파생(02 §4-2).
- * 동시 경쟁·대기열·서버 시계·실패율은 시뮬레이션하지 않는다(02 §6, 백엔드 범위).
- * `VITE_MOCK_FAIL=session` 이면 신청/취소가 SESSION_EXPIRED 를 던진다(Q-13 흐름 수동 검증용).
- */
 const DELAY_MS = { min: 200, max: 800 } as const
 
-/** 학번별 신청내역(모듈 싱글턴 — 새로고침 시 초기화) */
 const enrollmentsByStudent = new Map<string, EnrollmentRow[]>()
 
-const studentOf = (id: string): Student => ({ id, ...STUDENT_FIXTURE })
+const studentOf = (id: string): Student => ({
+  id,
+  ...STUDENT_FIXTURE,
+  creditLimit: creditLimitFor(STUDENT_FIXTURE.gpa),
+})
 
 function enrollmentsOf(studentId: string): EnrollmentRow[] {
   const existing = enrollmentsByStudent.get(studentId)
@@ -54,7 +56,7 @@ function assertSessionAlive(): void {
 }
 
 function findCourse(courseId: string): Course {
-  const course = ALL_COURSES.find((c) => c.id === courseId)
+  const course = ALL_COURSES.find((candidate) => candidate.id === courseId)
   if (!course) throw new Error(`mock: 알 수 없는 courseId ${courseId}`)
   return course
 }
@@ -76,14 +78,12 @@ export const mockApi: SukangApi = {
       )
     }),
 
-  /** 코드값 미제공(Q-14) → 학과(부) 이름이 곧 값 */
   listTagwa: ({ tagwaCd }) => simulate(() => ALL_COURSES.filter((c) => c.department === tagwaCd)),
 
   listYungae: ({ yungaeCd }) => simulate(() => [...(YUNGAE_COURSES[yungaeCd] ?? [])]),
 
   listHuss: () => simulate(() => [...HUSS_COURSES]),
 
-  /** 과목명 또는 학수번호 부분 일치(서버 판단 영역 — mock 근사) */
   searchCourses: ({ q }) =>
     simulate(() => ALL_COURSES.filter((c) => c.name.includes(q) || c.code.includes(q))),
 
@@ -101,7 +101,7 @@ export const mockApi: SukangApi = {
       validateEnroll(
         student,
         course,
-        rows.map((r) => r.course),
+        rows.map((row) => row.course),
       )
       rows.push({
         studentId,
@@ -118,7 +118,7 @@ export const mockApi: SukangApi = {
     simulate(() => {
       assertSessionAlive()
       const rows = enrollmentsOf(studentId)
-      const idx = rows.findIndex((r) => r.courseId === courseId)
-      if (idx >= 0) rows.splice(idx, 1)
+      const index = rows.findIndex((row) => row.courseId === courseId)
+      if (index >= 0) rows.splice(index, 1)
     }),
 }
