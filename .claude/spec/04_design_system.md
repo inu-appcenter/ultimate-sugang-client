@@ -11,7 +11,7 @@
 ### §1-1. 타이포그래피 (원§7)
 | 토큰(CSS 변수) | 값 | Tailwind | 용도 |
 |---|---|---|---|
-| `--font-family` | `Dotum, Gulim, 돋움, 굴림, arial, sans-serif` | `font-dotum`(body 기본) | 전역. **웹폰트 미도입**(D18) |
+| `--font-family` | `Dotum, Gulim, 돋움, 굴림, 'Nanum Gothic', arial, sans-serif` | `font-dotum`(body 기본) | 전역. Dotum/Gulim 부재 시 웹폰트 **Nanum Gothic**(@fontsource, OFL) — **D36**(D18 대체). Arial 폴백은 재현 실패 |
 | `--font-tiny` | `10px` | `text-tiny` | 영문 라벨(`span.th-en`, 원 `<font size="1">`) |
 | `--font-small` | `11px` | `text-small` | 메뉴 탭·신청/마감/취소·출력 버튼·안내(`.noti`·`.noti_blue`) |
 | `--font-base` | `12px` | `text-base` | 본문·테이블 셀·input/select |
@@ -51,6 +51,15 @@
 | `--noti-blue` | `#1958A8` | `.noti_blue`(신청내역 헤더 문구) | 원§6(보충) |
 | `--bg-noti` | `#EFF5FC` | 화면별 안내 영역 배경("계열" — 근사값) | 원§8.6(보충) |
 | `--tag-blue` | `#0000FF` (`blue`) | 교과목명 태그 `[75분수업]` 등(원 `<font color="blue">`) | 원§5.5(보충) |
+| `--row-hover` | `#F5F8FD` | `.dataT tbody tr:hover` 배경(원 `listColorOn/Off` 대응) | **D36** 사용자 지정(2026-09-06) |
+
+**CAPTCHA 모달(D34 — 원§9.1 "배경색 랜덤: 주황/노랑 관측" 근사)**
+| 토큰 | 값 | 용도 | 출처 |
+|---|---|---|---|
+| `--captcha-bg-orange` | `#F5A623` | 이미지 배경 후보 1 | 하네스 근사 |
+| `--captcha-bg-yellow` | `#F8E71C` | 이미지 배경 후보 2 | 하네스 근사 |
+| `--captcha-overlay` | `rgba(0,0,0,0.4)` | 모달 뒤 딤 | 하네스 |
+> 숫자·노이즈 색은 `--text`·`--text-muted`, 박스 테두리 `--blue-border`, 에러 문구 `--blue-text`(파란 굵은 글씨) 재사용.
 
 **로그인 화면**
 | 토큰 | 값 | 용도 | 출처 |
@@ -90,6 +99,7 @@
 | `--w-login` / `--h-login` / `--h-login-con` | `928px` / `380px` / `306px` | 로그인 박스 |
 | `--h-etc` | `43px` | 바로가기 버튼 |
 | `--w-print` / `--h-print` | `148px` / `24px` | 확인서출력·시간표출력(실측) |
+| `--w-captcha` | `520px` | CAPTCHA 모달 폭(D34, 하네스 기본값) |
 | `--sp-cell-y` / `--sp-cell-x` | `10px` / `15px` | `.perT th,td` padding |
 | `--sp-data-y` / `--sp-data-x` | `5px` / `3px` | `.dataT th,td` padding |
 | `--sp-ltf` | `10px` | `.ltf`·`.timeInfo` padding-left |
@@ -113,8 +123,8 @@
 ---
 
 ## §2. 폰트 정책
-- 스택 원문 그대로: `Dotum, Gulim, 돋움, 굴림, arial, sans-serif`. `input[type=text], select, textarea { font-family: Dotum, Gulim; font-size: 12px }`.
-- 웹폰트 미도입(D18, Q-15). macOS 등 미보유 환경은 `arial, sans-serif` 로 폴백(밀도 차이 발생 — 알려진 한계).
+- 스택: `Dotum, Gulim, 돋움, 굴림, 'Nanum Gothic', arial, sans-serif`(D36). `input[type=text], select, textarea { font-family: Dotum, Gulim, 'Nanum Gothic', sans-serif; font-size: 12px }`.
+- **웹폰트 적용(D36, D18 대체)**: `@fontsource/nanum-gothic` 400/700 을 `main.tsx` 에서 import(자체 호스팅, OFL). Dotum/Gulim 이 있는 Windows 는 원 폰트가 우선, 없는 환경(macOS 등)은 Nanum Gothic. Arial 폴백은 재현 실패로 간주한다.
 - 안티앨리어싱/자간 조정 금지(원본 재현).
 
 ---
@@ -134,7 +144,9 @@
 | `ThEn` | `span.th-en` (10px, `--blue-en`) — 원 `<font size="1" color="#16529B">` 대체 | — | D2 |
 | `CourseTitleCell` | `td.ltf > b(한글명[ span.tag(태그)]) + ' ' + br + 영문명` | 태그 유/무 · 마감 시 부모색 상속 | `01 §3-3` |
 | `ActionButton` | `a.btn_blue`(신청) / `a.btn_grey2`(마감, cursor 없음·핸들러 없음) / `a.btn_red`(취소) | 3종 | 폭 90%·padding 3px·11px bold |
-| `PrintButtons` | `.btn_regiP`(확인서출력 / Print Confirmation) · `.btn_scheP`(시간표출력 / Print Time table) | — | 동작 Q-5 |
+| `PrintButtons` | `.btn_regiP`(확인서출력 / Print Confirmation) · `.btn_scheP`(시간표출력 / Print Time table) | — | 클릭 → alert(D23). 색·크기 원문, 비활성 처리 금지 |
+| `CaptchaModal` | `.captcha-overlay > .captcha-box`(h1 제목 · `.captcha-body` p · `canvas.captcha-img` · `.captcha-input` label+input · `.captcha-btns` 확인/닫기 · `.captcha-error`) | 오답 에러(파란 굵은 글씨) / 이미지 재생성 | D34, `05 §10` |
+| 행 hover | `.dataT tbody tr:hover { background: --row-hover }` | — | D36 |
 | `EnrollmentArea` | `div.regi_area > div.regi_top > p.noti_blue(좌) + p(우: 버튼)` + `table.dataT` | — | `05 §6` |
 | `LoginBox` | `#login .tit(h1 로고 플레이스홀더 + h2)` `.login_con h3(LOGIN)` `.login_area .id_w p(label+span input)` `.btn_login` `.txt` `ul li a.btn_etc/.btn_etc2` `ul.last` | — | `05 §2` |
 | 미사용(정의만 이식) | `.btn_mrc` · `.skip` · `#noti_pop` · `.tit_sub`/`.tit_re_sub`(bul gif 미확보 → 배경 이미지 생략) · `.timeT`/`.leftT`(PRINT_APPLY, Q-5) · `.sch_areaSubT` · `.btn_area` | — | 원§6 전문 유지 |
@@ -151,6 +163,10 @@
 4. 원§6 `#login`·`#noti_pop` 등 id 선택자는 원문 유지(재현 목적 — 아키텍처 규칙의 예외로 D2 에 명시).
 5. Tailwind preflight 위에 원§6 리셋을 덧씌운다(`* { margin:0; padding:0; border:0; font-size:100%; vertical-align:baseline }` 등).
 6. `.dataT th, .dataT td` 의 `!important` 색(`.btn_* { color: … !important }`)은 원문 유지.
+7. **(D40)** `.sch_areaT, .sch_areaSubT`·`.leftT` 에 `box-sizing: content-box` 명시 — 원문이 미지정이라 preflight 의 border-box 를 되돌린다(높이 337px + 테두리 1/1/2px 기준 유지).
+8. **(D36)** `#login` 의 `margin:-190px 0 0 -464px; height:380px` → `margin:0; transform:translate(-50%,-50%); height:auto` — 배너(박스 하단) 포함 중앙 보정.
+9. **(D36)** 추가 규칙 `.dataT tbody tr:hover { background-color: var(--row-hover) }`.
+10. **(D34)** CAPTCHA 모달 클래스 `.captcha-overlay` `.captcha-box` `.captcha-body` `.captcha-img` `.captcha-input` `.captcha-btns` `.captcha-error` 를 하네스 추가 규칙 블록에 둔다(원 jquery-confirm CSS 미확보 → 흰 배경 + 파란 테두리 박스만 재현).
 
 ---
 
@@ -189,3 +205,6 @@
 | 컬럼 폭 = 설정 데이터 | §1-5 | D10 |
 | 뷰포트/테마 | 1400px+ 데스크탑·라이트 전용 | D8 |
 | `.timeT th` 상단선 `#3D75BB` → `--blue-topline` 통일 | §1-2 | D13 |
+| 웹폰트 Nanum Gothic · 행 hover `--row-hover` · 로그인 중앙 보정 | §1-1·§1-2·§4 | D36(2026-09-06) |
+| `.sch_areaT` content-box | §4 | D40 |
+| CAPTCHA 토큰·클래스 | §1-2·§4 | D34 |

@@ -10,7 +10,8 @@
 
 | 영역 | 채택 | 편차/근거 |
 |---|---|---|
-| 빌드/언어 | Vite + React 18 + TypeScript(strict) | 기본 |
+| 빌드/언어 | Vite 8 + **React 19** + TypeScript 6(strict, 단일 `tsconfig.json`) | **D37·D38**(2026-09-06) |
+| 폰트 | `@fontsource/nanum-gothic`(OFL) 400/700 자체 호스팅 — Dotum/Gulim 부재 환경 폴백 | **D36**(D18 대체) |
 | 스타일 | **Tailwind CSS(레이아웃 보조) + 원본 CSS 이식(`globals.css`, 토큰 var())** | **shadcn/ui 미도입** — `01 §1` 재현 대상 = DOM 구조·CSS. 원본 클래스명(`perT`·`dataT`·`btn_blue`…)을 그대로 쓴다 → **D2** |
 | 컴포넌트 | 시맨틱 HTML(`<table>`·네이티브 `<select>`·`<button>`) | 명세 원§1 "순수 table", 원§5.8 조회 버튼은 `<button>` 대체, `<font>` → `span.th-en` → D2 |
 | 다이얼로그 | **`window.alert` / `window.confirm`** | 원§9.2 지시. sonner·shadcn Dialog 미사용 → D2 |
@@ -54,6 +55,18 @@
 | N-22 | 시드 데이터 없음 | 명세 예시 행(현장교육.실습·대학수학(2)·게임프로그래밍 ×2·경영프로그래밍2) + 화면당 소량 픽스처. 학생 = 명세 예시. Q-2 | D22 |
 | N-23 | 원§4.3 "`~전공(연계)` 6개" vs 목록상 5개 | 목록 32개를 권위(`02 §5-3`) | (기록만) |
 | N-24 | 원§2.1 "결과 컬럼 수" ↔ 원§3 매트릭스 합계 | 일치 확인(10/10/9/9/8/9/10, 신청내역 11) — 충돌 없음 | — |
+| N-25 | Q-5 출력 화면 내용 없음 | 화면 미구현, 버튼 렌더 + alert `연습 사이트에서는 지원하지 않습니다.` | D23 |
+| N-26 | Q-6 대기열 | 최후순위 이관, 재논의 전 `WAITING_ROOM` SKIPPED | D24 |
+| N-27 | Q-1 계약 | 프론트 mock → API Spec 도출 → 서버 수정. http 착수 금지 | D25 |
+| N-28 | Q-2 시드 | `intake/INU-시드데이터.md` 74건 교체. 교양 개설학과 `교양`/`일선`, 부서명 교강사, 실제 건물번호 | D26 |
+| N-29 | 원어여부 필드 | `Course.isEnglish` → `EN(원어)` | D27 |
+| N-30 | 이수구분 enum | 관측 8종 확정 | D28 |
+| N-31 | CAPTCHA | 로직 구현, `VITE_CAPTCHA` 기본 off, `useCaptchaGate`(beforeSubmit) | D34 |
+| N-32 | 초기 탭 | 랜딩 상태(제목·결과 테이블 없음, 전공과목 안내만) | D35(D20 대체) |
+| N-33 | 행 hover·웹폰트·로그인 중앙 | hover `--row-hover` 구현 · Nanum Gothic 웹폰트 · `#login` transform 중앙 | D36 |
+| N-34 | preflight box-sizing | `.sch_areaT`(+`.sch_areaSubT`·`.leftT`) `content-box` 명시 | D40 |
+| N-35 | 초기 신청내역 | 0건 | D43 |
+| N-36 | 커밋 정책 | 게이트별 자동 커밋 중단 — 전 작업 완료 후 승인받아 일괄 | D48 |
 
 ---
 
@@ -80,18 +93,20 @@ export interface SukangApi {
   enroll(p: { studentId: string; courseId: string }): Promise<{ course: Course }>;  // O-10 (성공 메시지에 교과목명 필요)
   cancel(p: { studentId: string; courseId: string }): Promise<void>;                // O-11
 }
-// O-12~14(출력·대기열)는 Q-5/Q-6 답변 전 인터페이스에 추가하지 않는다.
+// O-12~14: D23(출력 = 버튼 alert, 오퍼레이션 없음) · D24(대기열 최후순위) — 인터페이스에 추가하지 않는다.
+// 이 인터페이스 + 02 §2 모델이 추후 도출할 API Spec 의 기준(D25).
 ```
 - `EnrollmentRow = Enrollment & { course: Course }` — 신청내역 11컬럼 렌더용 조인(`02 §2-2` 주석; 실 계약이 별도 조회면 http 어댑터가 조인).
 - 스키마: `StudentSchema`·`CourseSchema`·`EnrollmentSchema`·`EnrollmentRowSchema` + 배열. `z.infer` 로 타입.
 
 ### §3-3. mock 어댑터 (`features/sukang/api/mock/`) — 기본값 D1
-- `fixtures.ts`: 학생 1(명세 예시), 화면별 강좌 배열(D22), 초기 신청내역(취소 플로우 검증용 1~2건), 장바구니.
+- `fixtures.ts`: **`intake/INU-시드데이터.md` 관측 74건(유일 72) 그대로**(D26 — 임의 픽스처 금지). `※부분` 항목만 시드 §10 가이드로 보완(주석 표기). 초기 신청내역 **0건**(D43). 학생 = 시드 기준 학생 + gpa 고정값(3.2) → `creditLimit` 산출(D26). 연계전공 관측 없음 → 빈 결과.
 - `mockApi.ts`: 인메모리 상태(신청내역). 모든 호출에 `delay(200~800ms)`(원§12).
-- `validate.ts`: 서버 검증 시뮬레이션 — 순서 `02 §4-1`: `isClosed`→`CLASS_FULL`, 시간표 중복→`DUP_TIME`(시간표 문자열의 `요일+교시` 토큰 교집합), 동일 과목명→`DUP_SUBJECT`(`name` 동일), 학점 합 > `creditLimit`→`CREDIT_EXCEEDED`. `resolvedType` 산출: `course.department === student.department ? course.courseType : '일반선택'`(원§10.2 관측 1건에 맞춘 **mock 전용 근사** — 실 규칙은 백엔드, Q-14).
-- 실패율·대기열·서버 시계는 **시뮬레이션하지 않는다**(백엔드 범위, `02 §6`). 옵션 env 로 `SESSION_EXPIRED` 강제 발생 스위치 1개만(`VITE_MOCK_FAIL=session`) 두어 Q-13 흐름을 수동 검증 가능하게 한다.
+- `validate.ts`: 서버 검증 시뮬레이션 — 순서 `02 §4-1`(D41): 시간표 중복→`DUP_TIME` → 동일 과목명→`DUP_SUBJECT`(`name` 동일, 독립) → 학점 합 > `creditLimit`→`CREDIT_EXCEEDED` → `isClosed`→`CLASS_FULL`. 시간표는 **반교시 단위**(`1-2A` 와 `2B-3` 은 안 겹침 — 시드 §2.4 교차 배치) 슬롯으로 비교, 야간 `야N` 별도. `resolvedType` = 시드 §8 근사(D42): 개설학과 == 소속 → 유지 / 전공 계열 → `일반선택` / 그 외 유지. **실 규칙은 백엔드 소관(코드 주석 명시).** `creditLimit` = gpa 기반 20/21/24(D26).
+- CAPTCHA 게이트(D34): `features/sukang/captcha/` — `useCaptchaGate()` 가 신청 실행을 `beforeSubmit` 형태로 감싼다. `VITE_CAPTCHA=off`(기본)면 즉시 실행, `on` 이면 `CaptchaModal`(01 부록 A 문구, 05 §10) → 정답 시 보류 요청 실행, 오답 10회 → logout.
+- 실패율·대기열·서버 시계는 **시뮬레이션하지 않는다**(백엔드 범위, `02 §6`). 옵션 env 로 `SESSION_EXPIRED` 강제 발생 스위치 1개만(`VITE_MOCK_FAIL=session`, 신청/취소에만 적용 D44) 두어 Q-13 흐름을 수동 검증 가능하게 한다.
 
-### §3-4. http 어댑터 (`features/sukang/api/httpApi.ts`) — Q-1 답변 후
+### §3-4. http 어댑터 (`features/sukang/api/httpApi.ts`) — **D25: 착수 금지**(계약은 프론트 mock 에서 도출 후 서버가 맞춘다)
 - `shared/api/client.ts` 의 axios 인스턴스 사용. 응답 → Zod parse → 실패 시 `SukangError('SCHEMA')`. `Date` 헤더 → `serverTime.setOffsetFromDateHeader()`.
 - 타임아웃 → `TIMEOUT`. 인증 헤더·재발급 큐 **없음**(`02 §1` 인증 없음).
 
@@ -123,6 +138,8 @@ src/
       queryKeys.ts           sukangKeys.student/courses(screen,params)/enrollments
       hooks.ts               useStudent, useCourseList(screen, params, enabled), useEnrollments, useEnroll, useCancel
       columns.ts             SCREEN_COLUMNS[ScreenKey] + ENROLLMENT_COLUMNS (컬럼 정의·폭·라벨 ko/en) — D10
+      errors.ts              reportSukangError: alert + SESSION_EXPIRED → logout (03 §5-2)
+      captcha/               D34: useCaptchaGate.ts(beforeSubmit) · CaptchaModal.tsx · generateCaptcha.ts(4자리+노이즈 canvas) · texts.ts(01 부록 A 원문)
       constants/
         screens.ts           ScreenKey('Basket'…'Custom'), 탭 라벨 ko/en, 화면 제목(>>), 검색 패턴
         notices.ts           화면별 안내 문구 전문(01 §4)
@@ -146,6 +163,7 @@ src/
       screens/
         BasketScreen.tsx JungongScreen.tsx GyoyangScreen.tsx TagwaScreen.tsx
         YungaeScreen.tsx HussScreen.tsx CustomScreen.tsx
+        LandingScreen.tsx      D35 랜딩(제목·결과 테이블 없음, 전공과목 안내만)
   shared/
     api/client.ts            axios 인스턴스 팩토리(baseURL·timeout)
     api/delay.ts             randomDelay(min,max)
@@ -191,6 +209,8 @@ src/
 | Empty | 헤더만, **안내 문구 없음** | 원§10.3 |
 | Data | 행 렌더 | 행 색(grey/brown), 액션 셀 |
 - 신청/취소 진행 중: 같은 행 재클릭 무시(`isPending` 가드, 시각 변화 없음 — 원본 버튼에 disabled 스타일 없음).
+- Loading 은 "데이터 없음 + fetching" 일 때만(D45). 같은 조건 재조회·invalidate 중에는 기존 행 유지.
+- 행 hover: `.dataT tbody tr:hover` 배경 `--row-hover`(D36, 원 `listColorOn/Off` 대응). 탭 활성 강조는 없음(D17 유지).
 - 신청 성공 → `enrollments` 키만 invalidate. **`courses` 키는 invalidate 하지 않는다**(D4 미갱신). 취소 성공 → `enrollments` invalidate.
 
 ### §5-5. 조회 트리거 패턴
@@ -205,8 +225,8 @@ src/
 - 없음(D15).
 
 ### §5-8. 라우팅·URL
-- `/` LOGIN · `/sukang?menu=Basket|Jungong|Gyoyang|Tagwa|Yungae|Huss|Custom`(없거나 무효 → `Basket`, D20). 탭 클릭 = `setSearchParams({menu})`.
-- 출력 버튼: Q-5 전 no-op(렌더만).
+- `/` LOGIN · `/sukang?menu=Basket|Jungong|Gyoyang|Tagwa|Yungae|Huss|Custom`(없거나 무효 → **랜딩 상태** `LandingScreen`, D35). 탭 클릭 = `setSearchParams({menu})`.
+- 출력 버튼: 클릭 → `alert(MESSAGES.PRINT_UNSUPPORTED)`(D23). 시각 원문 유지, 비활성 처리 금지.
 
 ### §5-9. 접근성·마크업 충실도
 - `th[scope]` 원본대로(`.titY` 만 `col`, 나머지 라벨 `row`; dataT 헤더 `col`). `table.dataT[summary]` 는 HTML5 비표준이므로 `aria-label` 로 대체(05 §4).
@@ -221,20 +241,20 @@ src/
 | 1 | `step-1-setup` | 스캐폴드·토큰·globals.css 이식·alias·env·폴더·빈 라우트 | `step-1-setup.md` |
 | 2 | `step-2-infra` | 스키마·어댑터(mock)·훅·queryKeys·세션·상수(codes/notices/messages/columns)·공용 컴포넌트(ThEn·ActionButton·CourseTable 골격·dialog) | `step-2-infra.md` |
 | 3 | `step-3:LOGIN` · `step-3:MAIN_SHELL` · `step-3:ENROLLMENT_LIST` | 로그인 → 메인 골격(perT·탭·주의문구·제목 라인·출력버튼 자리) → 신청내역(11컬럼 + 취소 플로우) | `step-3-shell.md` |
-| 4 | `step-4:JUNGONG` · `step-4:HUSS` · `step-4:BASKET` | 조건 없음 3화면. **신청 플로우(alert·검증 메시지·내역 추가·미갱신)는 JUNGONG 에서 구현**하고 나머지가 재사용 | `step-4-nocond.md` |
+| 4 | `step-4:JUNGONG` · `step-4:CAPTCHA_GATE` · `step-4:HUSS` · `step-4:BASKET` | 조건 없음 3화면 + CAPTCHA 게이트(D34). **신청 플로우(alert·검증 메시지·내역 추가·미갱신)는 JUNGONG 에서 구현**하고 나머지가 재사용 | `step-4-nocond.md` |
 | 5 | `step-5:TAGWA` · `step-5:YUNGAE` | 단일 select + 조회 | `step-5-select.md` |
 | 6 | `step-6:GYOYANG` · `step-6:CUSTOM` | 2단 연동 select(표시 토글) · 텍스트 2자 이상 | `step-6-linked.md` |
-| 7 | `step-7:PRINT_CHECK` · `step-7:PRINT_APPLY` · `step-7:WAITING_ROOM` | **명세 gap(Q-5·Q-6)** — 답변 전 진행 금지. 미답이면 사유와 함께 `SKIPPED` | `step-7-gap.md` |
+| 7 | `step-7:PRINT_CHECK` · `step-7:PRINT_APPLY` · `step-7:WAITING_ROOM` | PRINT_* = 버튼 alert 확인(D23, Step 3 에서 구현) · WAITING_ROOM = `SKIPPED`(D24 재논의 전) | `step-7-gap.md` |
 | 8 | `step-8-qa` | Playwright 스모크 + 전 화면 수동 점검 | `step-8-qa.md` |
 
 - 각 화면 항목은 `implement-one-screen` 절차. Figma URL 없음 → `05` 기반(중단 없음).
-- 사람 게이트: Step 종료마다 리뷰 패킷 → 정지.
+- 사람 게이트: Step 종료마다 리뷰 패킷 → 정지. **(2026-09-06 사용자 지시: 큰 문제 없으면 정지 없이 끝까지 진행, 커밋은 마지막 일괄 D48)**
 
 ---
 
 ## §7. 셋업 체크리스트 (step-1 상세)
 1. `npm create vite@latest . -- --template react-ts` (현 디렉토리, `.claude/`·`intake/` 보존). Node 18+.
-2. 의존성: `react-router-dom` `@tanstack/react-query` `zustand` `react-hook-form` `zod` `@hookform/resolvers` `axios` `date-fns` `clsx` `tailwind-merge`. dev: `tailwindcss postcss autoprefixer` `@types/node` `eslint`(vite 기본) `prettier`.
+2. 의존성: `react@19` `react-dom@19`(D37) `react-router-dom@6` `@tanstack/react-query` `zustand` `react-hook-form` `zod` `@hookform/resolvers` `axios` `date-fns` `clsx` `tailwind-merge` `@fontsource/nanum-gothic`(D36). dev: `tailwindcss@3 postcss autoprefixer` `@types/node` `eslint@10 flat`(하네스 훅이 eslint 호출, D38) `prettier`.
 3. `tsconfig`: `strict`, `noUncheckedIndexedAccess`, `paths: {"@/*": ["./src/*"]}` + `vite.config.ts` alias.
 4. Tailwind: `content: ['./index.html','./src/**/*.{ts,tsx}']`, `theme.extend` = `04 §1` 토큰(색·폰트·크기), `borderRadius` 전부 `0`, `fontFamily.dotum`. **반응형 breakpoint·`dark:` 사용 금지**(D8).
 5. `src/shared/styles/globals.css`: `@tailwind base/components/utilities` + `:root` 토큰 변수(`04 §1`) + 원본 CSS 이식(`04 §4`, hex → `var(--token)`). token-lint allow 대상 경로(`src/shared/styles/globals.css`) 그대로.
@@ -249,7 +269,8 @@ src/
 |---|---|---|
 | `VITE_API_ADAPTER` | `mock` \| `http` | `mock`(D1) |
 | `VITE_API_BASE_URL` | http 어댑터 base URL(Q-1) | 없음 — `http` 선택 시 필수 |
-| `VITE_MOCK_FAIL` | `session`(SESSION_EXPIRED 강제) \| 미설정 | 미설정 |
+| `VITE_MOCK_FAIL` | `session`(SESSION_EXPIRED 강제, 신청/취소만) \| 미설정 | 미설정 |
+| `VITE_CAPTCHA` | `on` \| `off` — 신청 시 CAPTCHA 모달(D34). 사용자 대면 토글 없음 | `off` |
 `.env.example` 만 커밋. 실제 값은 사람이 입력.
 
 ## §9. QA 계획 (step-8)
@@ -261,4 +282,7 @@ src/
 5. 교양 이수구분 `11/21/23` 선택 시 대응 이수영역 select 만 표시, `50/70/80` 은 숨김.
 6. `마감` 행 클릭 → 아무 요청 없음.
 7. 미로그인 `/sukang` 직접 접근 → `/` 리다이렉트.
+8. 로그인 직후 랜딩 상태(D35): 제목·결과 테이블 없음, 전공과목 안내 3줄, 신청내역 헤더만.
+9. 확인서출력/시간표출력 클릭 → alert `연습 사이트에서는 지원하지 않습니다.`(D23).
+10. `VITE_CAPTCHA=off`(기본)에서 신청 시 모달 없음 / `on` 이면 모달 후 정답 시 신청 수행(수동).
 수동 점검: 4상태(D9) 화면별, 컬럼 세트 7종 + 신청내역 11, 안내 문구 전문 일치, 배너 상시 노출, 비밀번호 필드 부재.

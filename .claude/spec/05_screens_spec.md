@@ -26,13 +26,15 @@
 ```
 - 원본 iframe 구조는 따르지 않는다(D7). 뷰포트 정책 D8(반응형 없음).
 - 배너는 `.noti` 스타일(11px bold) + `em`(`--maroon`)으로 1줄, 스크롤 고정 아님(문서 최상단 상시 노출 — init 도출).
+- **랜딩 상태(D35)**: `?menu` 가 없거나 무효면 제목 라인·검색·결과 영역을 렌더하지 않고 전공과목 안내 문구(§3-4, `01 §4-3`)만 둔다. 신청내역 영역은 그대로. → §3-6.
+- **행 hover(D36)**: `.dataT tbody tr:hover` 배경 `--row-hover`.
 
 ---
 
 ## §2. `LOGIN` 로그인 (원§6 로그인 CSS·원§8.1)
 
 ```
-#login  (absolute, 50%/50% 중앙, margin -190px 0 0 -464px, 928×380)
+#login  (absolute, 50%/50% 중앙 — D36: transform translate(-50%,-50%), height auto → 배너 포함 중앙 보정. 원문 margin -190px 0 0 -464px / 928×380)
  ├ .tit  (mb 18px)
  │   h1  [LOGO] 텍스트 플레이스홀더 (inline-block, margin 0 34px 0 38px)      ← CI 금지(01 §1), D12
  │   h2  "수강신청 연습 사이트 (비공식 Mock)" (inline-block)                    ← 자체 명칭 D12 / Q-10
@@ -96,6 +98,12 @@
 ### §3-5. 골격 4상태
 - 셸 자체는 정적. Student 로딩/에러는 §3-1. 탭 전환 시 결과 영역은 새 화면 컴포넌트로 교체(이전 결과 미유지).
 
+### §3-6. 랜딩 상태 (D35 — 로그인 직후, `?menu` 없음/무효)
+```
+[PracticeBanner] → perT → 탭 7 + 주의 문구 → [ScreenNotice: 전공과목 안내 3줄(2행 em)] → (결과 영역 없음 — 헤더도 없음) → regi_area(헤더 문구 + 출력 버튼 + 신청내역 테이블, 초기 0건이라 thead 만)
+```
+- `>> 화면명` 제목 라인 없음. 탭 클릭 시 해당 화면으로 진입. 안내 문구 배경·스타일은 §3-4 와 동일.
+
 ---
 
 ## §4. 결과 테이블 공통 (`CourseTable`, 원§5.3~5.7·원§6)
@@ -125,8 +133,8 @@
   <td>0006154050</td>
   <td class="ltf"><b>현장교육.실습(Ⅴ-1)</b> <br>(INTERNSHIP(Ⅴ-1))</td>                       ← §4-6
   <td>12</td>
-  <td></td>                                          ← 원어여부 빈 셀
-  <td class="timeInfo">월 1 2 3 … (ZZ-102)</td>       ← left·pl 10px·nowrap·ellipsis. schedule[] 을 공백 1칸으로 join
+  <td></td>                                          ← 원어여부: isEnglish 면 `EN(원어)`, 아니면 빈 셀(D27)
+  <td class="timeInfo">월 1 2 3 … (ZZ-102)</td>       ← left·pl 10px·nowrap·ellipsis. schedule 원문 문자열 그대로(D26)
   <td>컴퓨터공학부</td>
   <td>최승식</td>
   <td class="last"><a class="btn_blue">신청</a></td>  ← §4-7
@@ -145,7 +153,7 @@
 <td class="ltf"><b>현장교육.실습(Ⅴ-1)</b> <br>(INTERNSHIP(Ⅴ-1))</td>                                  기본
 <td class="ltf"><b>대학수학(2)<span class="tag"> [75분수업]</span></b> <br>(CALCULUS(2))</td>           태그 포함
 ```
-- 한글명 `<b>`; 태그는 `<b>` **내부**에 `span.tag`(`--tag-blue`)로, 앞 공백 1칸; `</b>` 뒤 공백 1칸 → `<br>` → 영문명(괄호 포함, `nameEn` 원문). 태그 여러 개면 각 앞에 공백 1칸(init 도출).
+- 한글명 `<b>`; 태그는 `<b>` **내부**에 `span.tag`(`--tag-blue`)로 `[이름]` 형식, 앞 공백 1칸; `</b>` 뒤 공백 1칸 → `<br>` → `(` + `nameEn` 원문 + `)`(D26: 데이터에는 괄호 없음). 태그 여러 개면 각 앞에 공백 1칸(init 도출).
 - 마감 행에서는 부모 `grey` 색이 태그에도 상속되도록 `span.tag` 색을 `tr.grey` 하위에서 무효화(`.dataT .grey .tag { color: inherit }` — init 도출, 원§5.5 "태그도 회색으로 보인다" 재현).
 
 ### §4-7. 액션 셀 `ActionButton` (원§5.6)
@@ -213,7 +221,7 @@ div.regi_area
 - 헤더 문구 위치 = `p.noti_blue`(init 도출: 원§6 `.regi_top p.noti_blue { float:left }` 매핑). 출력 버튼 = 우측 `p`.
 - 4상태: §4-8 동일(Loading/Empty = thead 만).
 - 취소: `01 §6-2`. 성공 후 목록 재조회로 행 제거·순번 재부여.
-- 출력 버튼: 렌더만(Q-5) — 클릭 무동작, pointer 는 원문대로 유지.
+- 출력 버튼: 클릭 → `alert('연습 사이트에서는 지원하지 않습니다.')`(D23). 색·크기 원문 유지, 비활성 회색 처리 금지.
 
 ---
 
@@ -235,9 +243,9 @@ div.regi_area
 ## §8. 명세 gap 화면 (답변 전 구현 금지)
 | SCREEN_ID | 확보된 것 | 미확보(🙋🏻) |
 |---|---|---|
-| `PRINT_CHECK` 확인서출력 | 버튼 텍스트·스타일(§6) | 화면 내용·레이아웃·데이터·출력 방식(새 창/인쇄) — **Q-5** |
-| `PRINT_APPLY` 시간표출력 | 버튼 + CSS `.leftT`(float left, 100%, h 320px, 스크롤, 테두리 1/1/2px `--border`)·`.timeT`(fixed, 12px; `.rightT` float right 28%; th bg `--time-th`, 상단선; `.sun` `--time-sun`, `.sat` `--time-sat`, `.blue2` `--cyan`, `.grey2` `--border`; 셀 padding 0, h 1px, center) | 그리드 구성(요일/교시 축·셀 내용·rightT 내용) — **Q-5** |
-| `WAITING_ROOM` 대기열 | 원§12 "오픈 직후 N초 대기 화면" | 문구·레이아웃·진입/이탈 트리거·서버 신호 — **Q-6** |
+| `PRINT_CHECK` 확인서출력 | 버튼 텍스트·스타일(§6) | **D23**: 화면 미구현 확정. 클릭 → alert |
+| `PRINT_APPLY` 시간표출력 | 버튼 + CSS `.leftT`·`.timeT`(이식만, 추후 활용) | **D23**: 동일 |
+| `WAITING_ROOM` 대기열 | 원§12 "오픈 직후 N초 대기 화면" | **D24**: 최후순위 이관(실제/가짜 대기열 미정) — 재논의 전 미구현 |
 
 ---
 
@@ -254,3 +262,24 @@ div.regi_area
 10. 신청내역 헤더 문구 = `p.noti_blue`, 순번 = 신청 순(§6).
 11. 2단 select 1단 변경 시 하위 초기화(§5-1).
 12. 찾기 링크 위치(§2).
+13. 랜딩 상태 구성(§3-6, D35).
+14. CAPTCHA 모달 레이아웃(§10, D34 — 원 jquery-confirm 스타일 미확보).
+15. 로그인 중앙 보정 방식 transform(§2, D36).
+
+---
+
+## §10. CAPTCHA 모달 (D34 — `VITE_CAPTCHA=on` 일 때만, 원§9.1 · `01 부록 A`)
+```
+div.captcha-overlay  (fixed 전체, --captcha-overlay)
+ └ div.captcha-box   (absolute 중앙, w --w-captcha, bg --white, border 2px --blue-border, padding 15px)  role=dialog aria-modal
+     h1 "수강신청 매크로 방지"
+     div.captcha-body
+       canvas.captcha-img  (4자리 숫자 + 노이즈 점·선, 배경 --captcha-bg-orange | --captcha-bg-yellow 랜덤, 매 시도 재생성)
+       p ×N  부록 A body 원문(줄 단위, `(문자열 오류 총 10회 중 N회 남음)` · `(Total : 10  Remain : N)` 의 N 치환)
+     div.captcha-input   label "※ 문자열 입력 :" + input[type=text](200×32, 숫자 4자리)
+     div.captcha-btns    button "확인(Confirm)" · button "닫기"
+     p.captcha-error     (오답 시에만) "문자열을 잘 못 입력하였습니다. 다시 입력하세요.\nYou entered the wrong string. Try again..."  — --blue-text bold
+```
+- 트리거: 신청 버튼 클릭 시마다(정답 후 보류 요청 자동 수행). 오답: 모달 유지 + 에러 + 이미지 재생성 + Remain 1 차감. Remain 0 → 자동 로그아웃(`/`). `닫기` = 보류 요청 폐기.
+- Enter = 확인. 포커스는 입력창. 모달 뒤 클릭·ESC 는 닫지 않음(원본 관측 없음 — 보수적).
+- 시각은 하네스 보완(원 jquery-confirm CSS 미확보): 흰 배경 + 파란 테두리 박스만 재현. 값은 04 토큰만.

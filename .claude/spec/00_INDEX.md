@@ -2,6 +2,7 @@
 
 > 프로젝트: **inu-sugang-mock** — INU(인천대) 수강신청 사이트(sugang.inu.ac.kr, 2026-2학기)의 **연습용 모의 사이트**. UI/UX 재현 + 자체 백엔드(계약 미제공). 원본 명세: `intake/INU-수강신청-모의사이트-명세.md`(조사일 2026-09-04). init: 2026-09-06.
 > 이 폴더(`.claude/spec/`)는 **phase=BUILD 부터 읽기전용**(이 파일만 예외). 사실은 오직 여기서만 — 추측 금지, 없으면 🙋🏻.
+> **개정 2026-09-06**: 사용자 결정 회신(D23~D49)과 시드 문서 `intake/INU-시드데이터.md`(관측 74건) 반영. 각 문서의 `(개정 D-n)` 표기 참조.
 
 ## §1. 문서 목록·성격
 | 문서 | 성격 | 내용 |
@@ -29,8 +30,8 @@
 
 ## §4. 멈춤 규칙
 - spec 에 없거나 모순이고 §3 으로도 해소 안 되면 **코드 작성 금지 → 🙋🏻**. 엔드포인트/필드/화면 창작 금지.
-- **Q-5·Q-6 은 차단 질문**: `step-7:PRINT_CHECK`·`step-7:PRINT_APPLY`·`step-7:WAITING_ROOM` 은 답변 전 진행 금지(미답 시 SKIPPED).
-- Q-1 은 D1(mock 어댑터)로 우회 — 단 **http 어댑터는 계약 도착 전 구현 금지**.
+- Q-5 → **D23**: 출력 화면 미구현, 버튼 렌더 + 클릭 alert(`step-7:PRINT_*` 는 확인 항목). Q-6 → **D24**: 대기열 최후순위 이관(`step-7:WAITING_ROOM` 은 재논의 전 SKIPPED).
+- Q-1 → **D25**: 계약을 먼저 받지 않는다. 프론트 mock 완성 → 프론트가 예측하는 API Spec 도출 → 서버 수정. **http 어댑터 착수 금지**.
 - Figma 없음 → 시각은 `05` → `04` 순으로 자체 완성(중단 없음). 동작/데이터 gap 은 멈춤.
 
 ## §5. 식별자 매핑
@@ -73,6 +74,8 @@
 | Q-13 | 세션 만료 귀결·타임아웃 메시지·서버 시간 UI | — |
 | Q-14 | 학점 상한·status enum·이수구분 전체·원어여부 필드·select 코드값 | — |
 | Q-15 | 대체 웹폰트 | — |
+
+> **답변 반영(2026-09-06)**: Q-1→D25 · Q-2→D26 · Q-3→D33 · Q-4→D34 · Q-5→D23 · Q-6→D24 · Q-7/8/9→D35 · Q-10/11/12/15→D36 · Q-13→D32 · Q-14→D26·D27·D28·D29·D30·D31. 빌드 중 판단 승인 D37~D46, 저장소 정책 D47~D49. 상세 = `rules/decisions.md`, 시드 = `intake/INU-시드데이터.md`.
 
 ## §7. 관련 규칙(자동 로드)
 `rules/source-of-truth.md` · `rules/decisions.md` · `rules/api-contract.md` · `rules/ui-conventions.md` · `rules/architecture.md` · `rules/good-patterns.md` · `rules/antipatterns.md` · `rules/hooks.md`
