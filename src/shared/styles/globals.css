@@ -11,13 +11,18 @@
 
 /* ===== 디자인 토큰 (04 §1) ===== */
 :root {
-  /* §1-1 타이포그래피 (D18: 웹폰트 미도입) */
+  /* §1-1 타이포그래피 (D50: 원§7 원문 스택 — 'Nanum Gothic' 제거, D36 폐기) */
   --font-family: Dotum, Gulim, 돋움, 굴림, arial, sans-serif;
   --font-tiny: 10px;
   --font-small: 11px;
   --font-base: 12px;
   --font-login-btn: 13px;
   --font-header: 14px;
+  --font-tit-en: 13px;         /* D51 D2-05: `.tit_sub` 영문(실측 13px) */
+  --font-guide: 11pt;          /* D51 D2-01: 조회 전 안내 박스(원본 인라인 11pt = 14.6667px) */
+  --font-login-logo: 48px;     /* D54 §2.2·§2.3: `.tit h1 > font` 2개 · `.login_con h3 > font`(LOGIN) */
+  --font-login-h1: 24px;       /* D54 §2.2: `.tit h1` 자체(영문 `Undergraduate Course Registration`) */
+  --font-capt-title: 22px;     /* D54 §1.3: jquery-confirm `.jconfirm-title-c` */
 
   /* §1-2 색 — 본문 화면 */
   --navy-900: #0F4EAB;
@@ -32,6 +37,7 @@
   --red-border: #C80606;
   --red-text: #CA0000;
   --text: #333333;
+  --black: #000000;            /* D54 §2.2 `인천대학교` · §1.6 CAPTCHA 글자 — 순수 검정(≠ --text) */
   --text-muted: #848484;
   --maroon: #800000;
   --cyan: #0082A7;
@@ -45,14 +51,24 @@
   --border-input: #CFCFCF;
   --grey-sch: #616161;
   --noti-blue: #1958A8;
-  --bg-noti: #EFF5FC;
+  --bg-noti: #EFF5FC;          /* D51: 안내 박스는 --guide-bg 로 대체 — 정의만 존치 */
   --tag-blue: #0000FF;
+  --row-hover: #E1F1FF;        /* D52 D3-09: 행 hover — 원 `listColorOn()` 인라인 값 실측(#e1f1ff) */
+  --slate-title: #5D7287;      /* D50: 화면 제목 `>>` 접두(원본 인라인 style 실측) */
+  --guide-bg: #F1F7FD;         /* D51 D2-01: 조회 전 안내 박스 본문 배경(--bg-noti 대체) */
+  --guide-border: #D8E9F9;     /* D51 D2-01: 안내 박스 테두리 */
+  --em-blue: #0000FF;          /* D51 D2-01: 안내 강조 줄 — 원 `<font color="blue">` */
+  --em-red: #FF0000;           /* D51 D2-01: 안내 강조 줄 — 원 `<font color="red">` */
+  --btn-sch-bg: #EAEAEA;       /* D51 D2-04: 조회 버튼 배경 */
+  --btn-sch-bd-lt: #C9D7D4;    /* D51 D2-04: 조회 버튼 상·좌 테두리(양각) */
+  --btn-sch-bd-dk: #9D9DA1;    /* D51 D2-04: 조회 버튼 우·하 테두리(양각) */
 
   /* §1-2 색 — 로그인 화면 (⚠️ --login-navy ≠ --navy-900, 통일 금지) */
   --login-navy: #094A9A;
   --login-divide: #46639B;
-  --login-input: #E0E0E0;
-  --login-hint: #E2E0E1;
+  --login-title: #16529B;      /* D54 §2.2: `대학 수강신청`(값은 --blue-en 과 같지만 관할이 다르다) */
+  --login-input: #E0E0E0;      /* D54 §2.4: 원본 입력창에 배경 지정 없음(실측 #E8F0FE 는 Chrome 자동완성) — 미사용, 정의만 존치 */
+  --login-hint: #E2E0E1;       /* `.txt` + 전역 a:hover(D54 §3) */
   --btn-bg: #F6F6F6;
   --etc-border: #DFDFDF;
 
@@ -60,6 +76,16 @@
   --time-th: #D3D3D3;
   --time-sun: #F6E0E0;
   --time-sat: #C3DDEF;
+
+  /* §1-2 색 — CAPTCHA 모달(D54 §1.3·§1.5·§1.6 실측 — D34 의 근사 배경색·오버레이 토큰은 폐기).
+     오버레이(#444 opacity .2)·`닫기`(#3498DB)는 jquery-confirm 기본 테마 CSS 가 그대로 담당한다. */
+  --capt-box-bd: #A7CADC;      /* 본문 안쪽 박스 테두리 */
+  --capt-input-bg: #F1F7FD;    /* 입력창 배경(--guide-bg 와 같은 값, 관할이 다르다) */
+  --capt-line: #A0A0A0;        /* 노이즈 곡선 */
+  --capt-bg-1: #FFD38D;        /* 이미지 배경 4색 로테이션 */
+  --capt-bg-2: #4BF308;
+  --capt-bg-3: #7DC4C9;
+  --capt-bg-4: #08A9F3;
 
   /* §1-3 모서리 — 전 요소 0 */
   --radius: 0;
@@ -80,6 +106,14 @@
   --h-etc: 43px;
   --w-print: 148px;
   --h-print: 24px;
+  --w-btn-search: 125px;       /* D51 D2-04: 조회 버튼 실측 125×22 */
+  --h-btn-search: 22px;
+  --h-guide-inner: 332px;      /* D51 D2-01: 안내 본문 320 + 상하 padding 6 */
+  --w-capt-box: 730px;         /* D54 §1.3: jquery-confirm boxWidth(높이 374 는 내용에서 계산된다) */
+  --w-capt-inner: 699px;       /* §1.3 본문 안쪽 박스 */
+  --h-capt-inner: 261px;
+  --w-capt-img: 210px;         /* §1.4 이미지(원본 `width`/`height` 속성) */
+  --lh-capt-err: 16px;         /* §1.8 오답 문구 줄 간격 */
   --sp-cell-y: 10px;
   --sp-cell-x: 15px;
   --sp-data-y: 5px;
@@ -95,7 +129,30 @@
 }
 
 /* ===== 원§6 이식 — 리셋 / 기본 (Tailwind preflight 위에 덧씌움, 04 §4-5) ===== */
-* { margin:0; padding:0; border:0; font-size:100%; vertical-align:baseline; border-radius:var(--radius); }
+/* D-04: 원본 리셋에 `vertical-align:baseline` 없음 → 제거(표 셀이 UA `table{vertical-align:middle}` 을 상속).
+   D51 D2-09: 원본 리셋은 `*` 가 아니라 Meyer 방식 **요소 나열**이고 input/select/textarea 가 목록에 없다.
+   `*{border:0}` 이 폼 컨트롤의 UA 테두리까지 지우던 것을 되돌린다. */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video { margin:0; padding:0; border:0; }
+/* D39: `border-radius` 는 원본 대비 하네스 추가분 — 전 요소 0 유지. */
+* { border-radius:var(--radius); }
+/* D51 D2-08·D2-09: Tailwind preflight 는 `*{border-width:0}` 과 `input,select,…{padding:0}` 으로
+   폼 컨트롤까지 초기화한다. 원본은 폼 컨트롤에 아무 스타일도 주지 않으므로 UA 기본값으로 되돌린다. */
+input, select, textarea { border:revert; padding:revert; }
+/* D-01: Tailwind preflight 의 `html,:host{line-height:1.5}` 를 되돌린다(원본에 본문 line-height 규칙 없음).
+   body 가 `line-height:inherit` 이므로 html 만 복구하면 전역 전파된다. */
+html, :host { line-height:normal; }
 body { color:var(--text); font-size:var(--font-base);
        font-family:var(--font-family); }
 table { border-collapse:collapse; border-spacing:0; }
@@ -105,6 +162,12 @@ ol, ul { list-style:none; }
 img, select, textarea { vertical-align:middle; }
 input[type="text"], select, textarea { font-family:Dotum, Gulim; font-size:var(--font-base); }
 a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); }
+/* D54 §3: 원본은 `style.css` 의 `a:hover{color:#333}` 뒤에 인라인 시트가 같은 선택자로 한 번 더 선언한다
+   (명시도 동일 · !important 없음 → 문서 순서상 뒤가 이긴다). 전역이므로 `.btn_login`·`.btn_etc*`·
+   메뉴 탭(`a.btn_re`)까지 hover 시 글자색이 --login-hint 로 바뀐다 — 원본 동작 그대로 재현.
+   ⚠️ 색을 자기 자신에 직접 지정한 자식(예: 안내 문구의 `span.em_blue`)은 상속이 아니라 자기 선언이 이기므로
+      hover 해도 파란색을 유지한다(§3.2 표의 "안내 문구 링크 → --login-hint" 는 성립하지 않는다). */
+a:hover { text-decoration:none; color:var(--login-hint); }
 
 /* ===== 레이아웃 ===== */
 .wrap { box-sizing:border-box; padding:var(--sp-wrap); width:var(--w-wrap); min-width:var(--minw-wrap); }
@@ -118,20 +181,34 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
                 font-size:var(--font-header); background-color:var(--navy-900); }
 
 /* ===== 검색 영역 ===== */
-.sjt_sch { overflow:hidden; box-sizing:border-box; width:100%;
-           margin-bottom:var(--sp-sch-mb); padding-bottom:var(--sp-sch-pb);
-           border-bottom:1px solid var(--border-sch); }
+/* D52 D3-03·D3-05·D3-06: 원본 검색행은 테두리도 하단 여백도 없는 `<table>` 이다(원§6 `.sjt_sch` 규칙은
+   이 화면들에 애초에 적용되지 않는다 — D51 D2-08). 실측: `.wrap` 콘텐츠 좌측에서 20px 들여쓰기 ·
+   상단 10px(`.btn_area` margin-bottom 과 상쇄) · 행 높이 25px · 하단 구분선 없음 · 하단 여백 0.
+   요소 사이 10px 간격은 원본과 같이 `width="10px"` 스페이서 `<td>` 가 만든다(--sp-sch-mb/-pb 미사용). */
+.sjt_sch { box-sizing:border-box; height:25px; margin:10px 0 0 20px; padding:0; border:0; }
 .sjt_sch label, #register .sjt_sch span { float:left; }
 .sjt_sch label { display:inline-block; font-weight:bold; padding:8px 10px 0 0; }
-.sjt_sch span input[type="text"] { box-sizing:border-box; padding:0 5px;
-           width:var(--w-search-input); height:var(--h-input); vertical-align:middle;
-           border:1px solid var(--border-input); }
+/* D51 D2-08: 원 `.sjt_sch span input[type="text"]`(200×32) 규칙은 **이 5개 화면에 적용되지 않는다**
+   (원본 DOM 에 `.sjt_sch` 자체가 없음 — 실측). 폼 컨트롤은 UA 기본값(input 185×21 `size="30"` · select 134×19).
+   D52 D3-03·D3-07: 검색행 `<table>` 은 원§8.4 의 인라인 style
+   `font-weight:bold; font-size:9pt; font-family:굴림; text-align:center` 를 그대로 갖는다.
+   · `font-family:굴림`(폴백 스택 없음)이 제목 폭 56.4 와 `→` 폭 10.4 를 만든다 — body 스택(`…, arial, …`)으로
+     렌더하면 arial 이 U+2192 를 12px 로 그려 1.6px 넓어진다(실측 확인).
+   · select 의 `text-align:center` 는 select 전용 규칙이 아니라 **이 table 에서 상속**된 값이다
+     (3차 계획서 §5.2 의 미확인 항목 — 출처 규명 완료).
+   `→` 는 원본과 같이 bold 로 렌더돼야 10.4px 가 된다(normal 이면 8.5px). */
+.sjt_sch table { font-weight:bold; font-size:var(--font-base); font-family:굴림; text-align:center; }
+/* D52 D3-07: Chrome UA 가 `select` 의 text-align 을 자체 값으로 덮어 위 상속이 닿지 않으므로 명시한다. */
+.sjt_sch select { text-align:center; }
+/* D52 D3-03: 조회 버튼은 행 상단에서 2px 내려앉는다(실측 120.5 vs 행 118.5). */
+.sjt_sch .btn_search { margin-top:2px; }
 
 /* ===== 결과 스크롤 컨테이너 ===== */
 .sch_areaT,
 .sch_areaSubT { height:var(--h-result); overflow-y:auto;
                 border-width:1px 1px 2px; border-style:solid;
-                border-color:var(--border); }
+                border-color:var(--border);
+                box-sizing:content-box; }   /* D40: 원문 box-sizing 미지정 → preflight border-box 를 되돌림 */
 
 /* ===== 데이터 테이블 ===== */
 .dataT { table-layout:fixed; width:100%; font-size:var(--font-base); }
@@ -150,16 +227,27 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
 .dataT .blue  { color:var(--cyan); }
 
 /* ===== 신청내역 영역 ===== */
-.regi_area .regi_top { margin-bottom:var(--sp-regi-mb); }
-.regi_area > div::after { content:""; display:block; clear:both; }
-.regi_area .regi_top p { float:right; }
-.regi_area .regi_top p.noti_blue { float:left; padding-top:5px; }
+/* D52 D3-11: 원본은 출력 버튼 묶음을 `.tit_sub` **안에** `float:right` 로 넣는다(별도 `.regi_top` 행 없음).
+   float 는 부모 높이에 기여하지 않으므로 `.tit_sub` 는 16.5px 한 줄을 유지하고, 그 `margin-bottom:15px` +
+   `.leftT` 테두리 1px = 제목 하단 → 신청내역 테이블 상단 16px 가 된다. 따라서 `.tit_sub` 에 clearfix 를 걸면 안 된다.
+   D52 D3-10: `.leftT`(float:left) 를 담기 위해 clearfix 는 `.regi_area` 자신에만 건다. */
+.regi_area::after { content:""; display:block; clear:both; }
+.tit_sub .tit_btns { float:right; }
+/* D52 D3-10: 신청내역 테이블은 `div.leftT` 로 감싼다(원§6 규칙 — 명세에서 누락). 실측 1382×323
+   (= 내용 1380×320 + 좌우 1px + 하단 2px). `.sch_areaT` 와 같은 테두리 패턴이고 높이만 320px 다. */
+.leftT { float:left; width:100%; height:320px; overflow-y:auto;
+         border-width:1px 1px 2px; border-style:solid; border-color:var(--border);
+         box-sizing:content-box; }   /* D40 준용 */
 
 /* ===== 버튼 ===== */
+/* D52 D3-01: 원문은 `margin-right:1px` 이지만 실제 탭 간격은 4.3px 다 — 원본 HTML 소스의 개행/공백
+   텍스트 노드(11px 기준 ≈3.3px)가 더해진 값. JSX 는 그 공백을 없애므로 실측값을 margin 으로 직접 준다
+   (`{' '}` 는 폰트 폴백에 따라 폭이 흔들려 재현성이 없다). 7번째 탭 → `.noti` 간격도 같은 4.3px. */
 .btn_re    { display:inline-block; box-sizing:border-box; padding:var(--sp-tab);
-             margin-right:1px; font-weight:bold; font-size:var(--font-small);
+             margin-right:4.3px; font-weight:bold; font-size:var(--font-small);
              border:1px solid var(--border-tab); background-color:var(--bg-tab);
              cursor:pointer; }
+/* D51 D2-04: `.btn_sch` 는 원본 CSS 에 존재하지만 **조회 버튼에는 적용되지 않는다**(정의만 이식). */
 .btn_sch   { display:inline-block; box-sizing:border-box;
              padding:8px 5px 0; height:var(--h-input); vertical-align:middle;
              font-weight:bold; background-color:var(--grey-sch);
@@ -188,15 +276,31 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
              font-weight:bold; font-size:var(--font-small);
              background-color:var(--orange); cursor:pointer;
              color:var(--white) !important; }
-.btn_area  { margin-bottom:var(--sp-btnarea-mb); }
+/* D51 D2-04: 조회 버튼 실측 — 원본은 중첩 table 로 만든 90년대식 양각 버튼(바깥 상·좌 밝은색 /
+   우·하 어두운색, 안쪽 `<td>` 흰 1px). `<button>` + box-shadow 로 동일 시각 재현(원§5.8). */
+.btn_search { box-sizing:border-box; width:var(--w-btn-search); height:var(--h-btn-search);
+             padding:0; text-align:center; font-weight:bold; font-size:var(--font-base);
+             color:var(--slate-title); background-color:var(--btn-sch-bg); cursor:pointer;
+             border-style:solid; border-width:1px;
+             border-top-color:var(--btn-sch-bd-lt); border-left-color:var(--btn-sch-bd-lt);
+             border-right-color:var(--btn-sch-bd-dk); border-bottom-color:var(--btn-sch-bd-dk);
+             box-shadow:inset 1px 1px 0 var(--white); }
+.btn_area  { display:block; width:100%; margin-bottom:var(--sp-btnarea-mb); }
+/* D52 D3-08: `.noti` 는 우측 끝 정렬이 아니라 마지막 탭 바로 뒤에 인라인으로 이어진다(탭 간격과 동일한 4.3px). */
+.btn_area .noti { display:inline; vertical-align:baseline; }
 
 /* ===== 안내 문구 ===== */
 .noti      { font-size:var(--font-small); font-weight:bold; }
 .noti span { color:var(--text-muted); }
 .noti em   { color:var(--maroon); }
 .noti_blue { font-size:var(--font-small); color:var(--noti-blue); }
-/* bul2.gif / bul4.gif 미확보 → background 속성 제거, padding 유지 (04 §4-3) */
-.tit_sub    { margin:30px 0 15px; padding-left:35px; font-size:var(--font-header); }
+/* bul4.gif 미확보 → background 속성 제거, padding 유지 (04 §4-3).
+   D51 D2-05: `.tit_sub` 는 원 `bul2.gif`(파란 화살표) 를 쓴다. 학교 애셋 미사용 원칙(원§0)에 따라
+   자체 제작 12×12 화살표를 data URI 로 넣고 `padding-left:35px` · 세로 중앙은 원문 유지. */
+.tit_sub    { margin:30px 0 15px; padding-left:35px; font-size:var(--font-header);
+              background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%2316529B' d='M2 1L10 6L2 11Z'/%3E%3C/svg%3E") 0 center no-repeat; }
+.tit_sub b  { font-weight:bold; }
+.tit_sub .tit-en { font-size:var(--font-tit-en); color:var(--blue-en); }
 .tit_re_sub { margin:20px 0 10px; padding-left:30px; font-size:var(--font-header); }
 
 /* ===== 접근성 스킵 링크 ===== */
@@ -209,14 +313,25 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
         text-align:center; text-decoration:none !important; }
 
 /* ===== 로그인 화면 (id 선택자 원문 유지 — D2 예외) ===== */
+/* D54 §2.1: 배너 제거(D52 D3-02) 후 D36 의 transform 중앙 보정을 원문 규칙으로 되돌린다.
+   `height:380px` 는 파란 박스까지만 잡는 값이고 아래 안내 문구는 넘쳐 흐른다(원본도 동일 — overflow 미지정). */
 #login { position:absolute; top:50%; left:50%;
-         margin:-190px 0 0 -464px; width:var(--w-login); height:var(--h-login); }
+         margin:calc(var(--h-login) / -2) 0 0 calc(var(--w-login) / -2);
+         width:var(--w-login); height:var(--h-login); }
 #login .tit { margin-bottom:18px; }
-#login .tit h1, #login .tit h2 { display:inline-block; }
-#login .tit h1 { margin:0 34px 0 38px; }
+#login .tit h1 { display:inline-block; margin:0 34px 0 38px;
+                 font-size:var(--font-login-h1); font-weight:bold; }
+/* D54 §2.2: 첫 줄은 `<font>` 2개(48px) — 한글은 순수 검정, `대학 수강신청` 은 --login-title.
+   둘 사이 6.7px 는 원본의 태그 사이 공백 텍스트 노드다(JSX 는 그 공백을 지우므로 margin 으로 준다, D52 D3-01 준용). */
+#login .tit h1 .logo_ko,
+#login .tit h1 .logo_sub { font-size:var(--font-login-logo); font-weight:bold; }
+#login .tit h1 .logo_ko  { color:var(--black); margin-right:6.7px; }
+#login .tit h1 .logo_sub { color:var(--login-title); }
 #login .login_con { box-sizing:border-box; padding:60px 60px 0;
                     width:var(--w-login); height:var(--h-login-con); background:var(--login-navy); }
 #login .login_con h3 { margin-bottom:34px; }
+/* D54 §2.3: 원문 `<font size="26" color="white">LOGIN</font>` — 실측 48px */
+#login .login_con h3 .logo_en { font-size:var(--font-login-logo); font-weight:bold; color:var(--white); }
 #login .login_con .login_area { position:relative; overflow:hidden; }
 #login .login_con .login_area > div { float:left; overflow:hidden; }
 #login .id_w { position:relative; padding-right:125px;
@@ -226,9 +341,12 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
 #login .id_w > p > span { display:table-cell; }
 #login .id_w > p > label { width:110px; height:var(--h-input); vertical-align:middle;
                            color:var(--white); font-weight:bold; }
+/* D54 §2.4: 원본 CSS 에 배경 지정이 없다(실측 #E8F0FE 는 Chrome 자동완성 하이라이트) → UA 기본 흰색.
+   font 은 원본 실측(Dotum, Gulim)을 그대로 — 전역 리셋의 `input[type="text"], select, textarea` 는
+   `type="password"` 를 덮지 못하므로 여기서 두 타입에 함께 준다. */
 #login .id_w > p > span input { box-sizing:border-box; padding:0 5px;
                                 width:var(--w-login-input); height:var(--h-input); border:none;
-                                background-color:var(--login-input); }
+                                font-family:Dotum, Gulim; font-size:var(--font-base); }
 #login .id_w .txt { padding-top:10px; font-weight:bold;
                     color:var(--login-hint); font-size:var(--font-small); }
 .btn_login { display:block; position:absolute; top:0; left:300px;
@@ -247,6 +365,12 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
 .btn_etc2 { display:block; box-sizing:border-box; padding:6px 0 0 8px;
             height:var(--h-etc); font-weight:bold; cursor:pointer;
             border:3px solid var(--etc-border); background:var(--bg-tab); }
+/* D54 §2.8: 파란 박스 아래 안내 문구. x 기준선 293 = `.login_con` 좌측 + padding 60 · 줄 간격 28.5px
+   (줄 높이 13.5 + 15). 원본 2행(모의 수강신청 INTIP)은 모의 사이트에서 삭제 → 3행이 y=697.5 로 올라온다. */
+#login .login_txt { margin-top:14px; padding-left:60px; font-size:var(--font-base); }
+#login .login_txt p + p { margin-top:15px; }
+#login .login_txt .em_blue { color:var(--em-blue); }
+#login .login_txt .em_red  { color:var(--em-red); }
 
 /* ===== 공지 팝업 (정의만 이식) ===== */
 #noti_pop .tit_pop { overflow:hidden; background-color:var(--login-navy); }
@@ -258,8 +382,6 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
 #noti_pop .con_pop .block2 { margin-bottom:20px; line-height:1.5em; }
 
 /* ===== 시간표 출력 화면 (PRINT_APPLY — Q-5 전 미사용, 정의만 이식) ===== */
-.leftT { float:left; width:100%; height:320px; overflow-y:auto;
-         border-width:1px 1px 2px; border-style:solid; border-color:var(--border); }
 .timeT { table-layout:fixed; font-size:var(--font-base); }
 .timeT.rightT { float:right; width:28%; }
 .timeT th, .timeT td { box-sizing:border-box; padding:0; height:1px;
@@ -272,9 +394,77 @@ a:link, a:visited, a:hover, a:active { text-decoration:none; color:var(--text); 
 .timeT .grey2 { background-color:var(--border); }
 
 /* ===== 하네스 추가 규칙 (04 §4-2) — 이 블록 외 신규 클래스 금지 ===== */
-.th-en { font-size:var(--font-tiny); color:var(--blue-en); }      /* <font size="1" color="#16529B"> 대체 (D2) */
+.th-en,
+.btn_re .tab-en { font-size:var(--font-tiny); color:var(--blue-en); }  /* <font size="1" color="#16529B"> 대체 (D2·D51 D2-02) */
 .tag { color:var(--tag-blue); }                                     /* <font color="blue"> 대체 (D2) */
 .dataT .grey .tag { color:inherit; }                                /* 마감 행: 태그도 부모색 상속 (01 §3-3) */
-.scr-noti { background:var(--bg-noti); }                            /* 화면별 안내 영역 배경 (원§8.6) */
-.practice-banner { font-size:var(--font-small); font-weight:bold; color:var(--maroon); } /* D11: .noti em 스타일 */
+/* D51 D2-01: 조회 전 안내 박스 — 원본은 조회 전에 `.sch_areaT`·결과 `table.dataT` 를 렌더하지 않고
+   그 자리에 이 박스를 놓는다. 실측 1380×345 / 본문 콘텐츠 1360×320 / 인라인 11pt bold.
+   D52 D3-04: 5px 흰 여백은 **테두리 바깥**(margin)이고, 테두리 안쪽 흰 여백은 4방향 모두 3px 다.
+   → 상 5px margin / 테두리 1px / padding 3px / `--guide-bg` padding 6px / 콘텐츠 1360×320.
+   자체 높이 340px + margin 5px = 점유 345px(원본 실측치와 동일). */
+.guide_box { box-sizing:border-box; width:100%; margin-top:5px; padding:3px;
+             border:1px solid var(--guide-border); background:var(--white);
+             font-size:var(--font-guide); font-weight:bold; text-align:left; }
+/* D53 D4-01: 원본 안내 문구는 각 줄이 THIN SPACE(U+2009)로 시작해 하늘색 영역 좌측에서 20.66px 들여쓰기된다
+   (테두리 좌상단 기준 글자 시작 x = 1 + 3 + 20.66 = 24.66). THIN SPACE 의 실폭은 폰트 폴백에 좌우되므로
+   마크업이 아니라 좌측 패딩으로 재현한다. 하늘색 배경 범위(테두리에서 4px)는 그대로 둔다. */
+.guide_box .guide_inner { box-sizing:border-box; padding:6px 6px 6px 20.66px;
+             min-height:var(--h-guide-inner); background:var(--guide-bg); }
+.guide_box .em_blue { color:var(--em-blue); }                       /* 원 `<font color="blue">` */
+.guide_box .em_red  { color:var(--em-red); }                        /* 원 `<font color="red">` */
+/* D52 D3-09: 원본은 CSS `:hover` 가 아니라 강좌 행마다 `onmouseover=listColorOn(this)` 인라인 핸들러로
+   `#e1f1ff` 를 칠한다(마감 행 `tr.grey` 포함 — 예외 없음). 조회 결과 표(`.sch_areaT` 안)에만 걸린다. */
+.sch_areaT table.dataT tbody tr:hover { background-color:var(--row-hover); }
+
+/* D53 D4-03: 원본 검색 입력에는 인라인 style 도 전용 CSS 규칙도 없다 — 폭은 `size="30"`, 높이는 폰트 메트릭으로
+   브라우저가 자동 계산한다(실측 185×20.5 `content-box`). D51 D2-08 의 고정 치수(185×21)를 걷어낸다.
+   ⚠️ preflight 의 `*{box-sizing:border-box}` 는 **이 요소에서만** 무력화한다 — 전역 제거는 border-box 전제로
+   맞춰 둔 `.sch_areaT`·`.guide_box`·`.btn_search`·`.btn_blue` 등을 전부 깨뜨린다(4차 §3 경고).
+   테두리·padding·배경은 UA 기본(2px inset #767676 / 1px 2px)이므로 선언하지 않는다. */
+.sjt_sch input[type="text"] { box-sizing:content-box; width:auto; height:auto; }
+
+.tit_scr { font-weight:bold; font-size:var(--font-base); text-align:center; color:var(--slate-title); }
+                                                                    /* D-05: 원본 인라인 style(9pt=12px, bold, #5D7287, center) */
+
+/* ===== CAPTCHA 모달 (D54 §1 — jquery-confirm 3.3.4 실제 설치, `jconfirm-light` 테마) =====
+   벤더 CSS(`jquery-confirm/dist/jquery-confirm.min.css`, main.tsx 에서 globals.css 보다 먼저 import)가
+   실측값을 그대로 만든다: 오버레이 #444/.2 · 박스 radius 5px + shadow · `.jconfirm-title-c` 22/20 + pb 15(=35)
+   · `.jconfirm-content-pane` mb 15 · `.jconfirm-buttons` float:right + pb 11 · `닫기`(.btn-blue) 6px 12px/14px bold/#3498DB.
+   박스 높이 374 = 15(pt) + 35(title-c) + 262(content) + 15(mb) + 36(버튼 32 + mb 4) + 11(pb) — 계산이 실측과 일치한다.
+   여기서는 원본이 지정한 것만 덧쓴다: 박스 폭(boxWidth) + 학교가 넣은 본문 마크업. */
+.jconfirm.jconfirm-light .jconfirm-box { width:var(--w-capt-box); }
+/* 벤더 기본값에서 실측(374)과 어긋나는 2가지를 되돌린다 — 둘 다 측정 머신의 폰트 폴백에서만 벌어진다.
+   ① `.jconfirm-title-c` 는 line-height 20 + pb 15 = 35 여야 하는데, 제목(한글)의 `vertical-align:middle`
+      인라인 박스가 폰트 메트릭에 따라 line-height 를 넘겨 36.3 이 된다 → 실측값 35 로 고정(D51 D2-04 준용).
+   ② `.jconfirm-content-pane` 는 `display:inline-block` + `overflow-y:auto` 라 베이스라인이 하단 모서리가 되고,
+      그 아래로 strut 의 descender 3px 가 붙어 박스가 3px 커진다. 원본 실측(15+35+262+15+36+11 = 374)에는 그 갭이 없다
+      → `display:block`(폭 100% 동일, 스크롤 동작 동일)으로 갭을 없앤다. */
+.jconfirm .jconfirm-box div.jconfirm-title-c { height:35px; }
+.jconfirm .jconfirm-box div.jconfirm-content-pane { display:block; }
+/* §1.3 본문 안쪽 박스 — 700 폭 content 안에서 상·좌우 0.5px 씩 남기고 699×261(0.5+261+0.5 = content 262). */
+.capt_box { box-sizing:border-box; width:var(--w-capt-inner); height:var(--h-capt-inner);
+            margin:0.5px auto; padding:5px 3px;
+            border:1px solid var(--capt-box-bd); background:var(--white); }
+/* §1.4 이미지·본문 2열. 이미지 셀 총폭 13.6 + 210 + 20 = 243.6 → 본문 좌측이 박스 기준 263.1 이 된다.
+   셀 padding-top 은 이미지 76 / 본문 70.6 을 만든다(안쪽 박스 콘텐츠 상단 = 56.5). */
+.capt_tbl { width:100%; }
+.capt_tbl td { vertical-align:top; }
+.capt_tbl .capt_img_c { box-sizing:content-box; width:var(--w-capt-img); padding:19.5px 20px 0 13.6px; }
+.capt_tbl .capt_txt_c { padding-top:14.1px; font-weight:bold; }
+.capt_box canvas { display:block; }
+.capt_txt_c p { line-height:1.5; }
+.capt_txt_c .em_blue { color:var(--em-blue); }   /* §1.5 강조 `"확인"` */
+.capt_txt_c .em_red  { color:var(--em-red); }    /* §1.5 강조 `10`·Remain */
+/* §1.4 입력 행 — 입력창은 원본과 같은 규칙(`size="20"` + UA 기본 테두리·padding)만 쓰고 폭을 고정하지 않는다(D53 D4-03 준용).
+   `확인(Confirm)` 은 색 조합이 `.btn_blue` 와 같은 폭 없는 변형 = 기존 `.btn_mrc`(11px bold / #1F5CB7 / #F2F2F2 / #004096). */
+/* 입력 행·오답 문구는 본문 블록(263.1)보다 13.9px 안쪽에서 시작한다 — 라벨 x≈277 · 입력창 x≈360.8 이 함께 맞는다.
+   §1.8 좌표가 스크린샷 역산(±3px)이라 이 들여쓰기도 그 오차를 그대로 갖는다. */
+.capt_field, .capt_err { padding-left:13.9px; }
+.capt_field { margin-top:8px; }
+.capt_field input[type="text"] { background-color:var(--capt-input-bg); font-weight:normal; }
+/* §1.8 오답 문구 — 모달·박스 크기는 그대로, 입력 행 아래 2줄 추가(파랑 bold, 줄 간격 16px). */
+.capt_txt_c p.capt_err { margin-top:13px; line-height:var(--lh-capt-err);   /* `.capt_txt_c p` 의 1.5 를 이긴다 */
+                         color:var(--em-blue); white-space:pre-line; }
+
 [hidden] { display:none; }

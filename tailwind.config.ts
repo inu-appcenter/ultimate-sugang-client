@@ -60,6 +60,9 @@ export default {
         'time-th': 'var(--time-th)',
         'time-sun': 'var(--time-sun)',
         'time-sat': 'var(--time-sat)',
+        'row-hover': 'var(--row-hover)',
+        black: 'var(--black)',
+        'login-title': 'var(--login-title)',
       },
       borderColor: {
         DEFAULT: 'var(--border)',
@@ -73,6 +76,8 @@ export default {
         base: 'var(--font-base)',
         'login-btn': 'var(--font-login-btn)',
         header: 'var(--font-header)',
+        'login-logo': 'var(--font-login-logo)',
+        'login-h1': 'var(--font-login-h1)',
       },
       padding: {
         wrap: 'var(--sp-wrap)',
