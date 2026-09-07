@@ -1,24 +1,32 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 
-/**
- * D14: 세션 = 표시용 학번 1개. 인증·토큰·쿠키·재발급 없음(02 §1).
- * sessionStorage persist — 탭을 닫으면 소멸한다(03 §5-1).
- */
 export interface SessionState {
   studentId: string | null
-  login: (studentId: string) => void
+  accessToken: string | null
+  captchaFails: number
+  login: (studentId: string, accessToken?: string | null) => void
   logout: () => void
+  setAccessToken: (accessToken: string) => void
+  recordCaptchaFail: () => number
 }
 
 export const SESSION_STORAGE_KEY = 'inu-sugang-mock.session'
 
 export const useSessionStore = create<SessionState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       studentId: null,
-      login: (studentId) => set({ studentId }),
-      logout: () => set({ studentId: null }),
+      accessToken: null,
+      captchaFails: 0,
+      login: (studentId, accessToken = null) => set({ studentId, accessToken, captchaFails: 0 }),
+      logout: () => set({ studentId: null, accessToken: null, captchaFails: 0 }),
+      setAccessToken: (accessToken) => set({ accessToken }),
+      recordCaptchaFail: () => {
+        const next = get().captchaFails + 1
+        set({ captchaFails: next })
+        return next
+      },
     }),
     { name: SESSION_STORAGE_KEY, storage: createJSONStorage(() => sessionStorage) },
   ),
