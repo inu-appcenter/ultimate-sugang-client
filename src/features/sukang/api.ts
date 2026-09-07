@@ -8,20 +8,17 @@ import {
   StudentSchema,
 } from '@/features/sukang/schemas'
 
-/**
- * 03 §3-1: 화면·훅은 이 `sukangApi` 만 호출한다. 모든 어댑터 출력은 Zod parse 후 사용(mock 도 예외 없음).
- * parse 실패 → SukangError('SCHEMA'). 어댑터가 던진 SukangError 는 그대로 전파.
- */
 const adapter = getAdapter()
 
-async function parsed<T>(schema: ZodType<T>, result: Promise<unknown>): Promise<T> {
-  const raw = await result
+// 모든 어댑터 출력은 Zod parse 후 사용 → .claude/spec/convention/01_data.md §1
+async function parsed<T>(schema: ZodType<T>, request: Promise<unknown>): Promise<T> {
+  const raw = await request
   try {
     return schema.parse(raw)
-  } catch (e) {
-    if (e instanceof ZodError)
-      throw new SukangError('SCHEMA', '응답이 스키마와 일치하지 않습니다', { cause: e })
-    throw e
+  } catch (error) {
+    if (error instanceof ZodError)
+      throw new SukangError('SCHEMA', '응답이 스키마와 일치하지 않습니다', { cause: error })
+    throw error
   }
 }
 
